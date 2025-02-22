@@ -9,13 +9,13 @@ part of 'watchlist_entry.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetWatchListEntryCollection on Isar {
-  IsarCollection<WatchListEntry> get watchListEntrys => this.collection();
+extension GetWatchlistEntryCollection on Isar {
+  IsarCollection<WatchlistEntry> get watchlistEntrys => this.collection();
 }
 
-const WatchListEntrySchema = CollectionSchema(
-  name: r'WatchListEntry',
-  id: -4214278293621567122,
+const WatchlistEntrySchema = CollectionSchema(
+  name: r'WatchlistEntry',
+  id: 1949703231199957612,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,
@@ -50,7 +50,8 @@ const WatchListEntrySchema = CollectionSchema(
     r'priority': PropertySchema(
       id: 6,
       name: r'priority',
-      type: IsarType.long,
+      type: IsarType.byte,
+      enumMap: _WatchlistEntrypriorityEnumValueMap,
     ),
     r'title': PropertySchema(
       id: 7,
@@ -68,22 +69,22 @@ const WatchListEntrySchema = CollectionSchema(
       type: IsarType.dateTime,
     )
   },
-  estimateSize: _watchListEntryEstimateSize,
-  serialize: _watchListEntrySerialize,
-  deserialize: _watchListEntryDeserialize,
-  deserializeProp: _watchListEntryDeserializeProp,
+  estimateSize: _watchlistEntryEstimateSize,
+  serialize: _watchlistEntrySerialize,
+  deserialize: _watchlistEntryDeserialize,
+  deserializeProp: _watchlistEntryDeserializeProp,
   idName: r'id',
   indexes: {},
   links: {},
   embeddedSchemas: {},
-  getId: _watchListEntryGetId,
-  getLinks: _watchListEntryGetLinks,
-  attach: _watchListEntryAttach,
+  getId: _watchlistEntryGetId,
+  getLinks: _watchlistEntryGetLinks,
+  attach: _watchlistEntryAttach,
   version: '3.1.0+1',
 );
 
-int _watchListEntryEstimateSize(
-  WatchListEntry object,
+int _watchlistEntryEstimateSize(
+  WatchlistEntry object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -93,8 +94,8 @@ int _watchListEntryEstimateSize(
   return bytesCount;
 }
 
-void _watchListEntrySerialize(
-  WatchListEntry object,
+void _watchlistEntrySerialize(
+  WatchlistEntry object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -105,34 +106,36 @@ void _watchListEntrySerialize(
   writer.writeBool(offsets[3], object.isFinished);
   writer.writeBool(offsets[4], object.isRecommendable);
   writer.writeBool(offsets[5], object.isUpcoming);
-  writer.writeLong(offsets[6], object.priority);
+  writer.writeByte(offsets[6], object.priority.index);
   writer.writeString(offsets[7], object.title);
   writer.writeString(offsets[8], object.type);
   writer.writeDateTime(offsets[9], object.updatedAt);
 }
 
-WatchListEntry _watchListEntryDeserialize(
+WatchlistEntry _watchlistEntryDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = WatchListEntry();
+  final object = WatchlistEntry();
   object.createdAt = reader.readDateTime(offsets[0]);
-  object.estimatedReleaseDate = reader.readDateTime(offsets[1]);
-  object.finishedAt = reader.readDateTime(offsets[2]);
+  object.estimatedReleaseDate = reader.readDateTimeOrNull(offsets[1]);
+  object.finishedAt = reader.readDateTimeOrNull(offsets[2]);
   object.id = id;
   object.isFinished = reader.readBool(offsets[3]);
   object.isRecommendable = reader.readBool(offsets[4]);
   object.isUpcoming = reader.readBool(offsets[5]);
-  object.priority = reader.readLong(offsets[6]);
+  object.priority =
+      _WatchlistEntrypriorityValueEnumMap[reader.readByteOrNull(offsets[6])] ??
+          WatchlistEntryPriority.high;
   object.title = reader.readString(offsets[7]);
   object.type = reader.readString(offsets[8]);
-  object.updatedAt = reader.readDateTime(offsets[9]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[9]);
   return object;
 }
 
-P _watchListEntryDeserializeProp<P>(
+P _watchlistEntryDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -142,9 +145,9 @@ P _watchListEntryDeserializeProp<P>(
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
@@ -152,43 +155,56 @@ P _watchListEntryDeserializeProp<P>(
     case 5:
       return (reader.readBool(offset)) as P;
     case 6:
-      return (reader.readLong(offset)) as P;
+      return (_WatchlistEntrypriorityValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          WatchlistEntryPriority.high) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
     case 9:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-Id _watchListEntryGetId(WatchListEntry object) {
+const _WatchlistEntrypriorityEnumValueMap = {
+  'high': 0,
+  'medium': 1,
+  'normal': 2,
+};
+const _WatchlistEntrypriorityValueEnumMap = {
+  0: WatchlistEntryPriority.high,
+  1: WatchlistEntryPriority.medium,
+  2: WatchlistEntryPriority.normal,
+};
+
+Id _watchlistEntryGetId(WatchlistEntry object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _watchListEntryGetLinks(WatchListEntry object) {
+List<IsarLinkBase<dynamic>> _watchlistEntryGetLinks(WatchlistEntry object) {
   return [];
 }
 
-void _watchListEntryAttach(
-    IsarCollection<dynamic> col, Id id, WatchListEntry object) {
+void _watchlistEntryAttach(
+    IsarCollection<dynamic> col, Id id, WatchlistEntry object) {
   object.id = id;
 }
 
-extension WatchListEntryQueryWhereSort
-    on QueryBuilder<WatchListEntry, WatchListEntry, QWhere> {
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterWhere> anyId() {
+extension WatchlistEntryQueryWhereSort
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QWhere> {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension WatchListEntryQueryWhere
-    on QueryBuilder<WatchListEntry, WatchListEntry, QWhereClause> {
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterWhereClause> idEqualTo(
+extension WatchlistEntryQueryWhere
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QWhereClause> {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterWhereClause> idEqualTo(
       Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -198,7 +214,7 @@ extension WatchListEntryQueryWhere
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterWhereClause> idNotEqualTo(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterWhereClause> idNotEqualTo(
       Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -221,7 +237,7 @@ extension WatchListEntryQueryWhere
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterWhereClause> idGreaterThan(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterWhereClause> idGreaterThan(
       Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
@@ -231,7 +247,7 @@ extension WatchListEntryQueryWhere
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterWhereClause> idLessThan(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterWhereClause> idLessThan(
       Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
@@ -241,7 +257,7 @@ extension WatchListEntryQueryWhere
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterWhereClause> idBetween(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -258,9 +274,9 @@ extension WatchListEntryQueryWhere
   }
 }
 
-extension WatchListEntryQueryFilter
-    on QueryBuilder<WatchListEntry, WatchListEntry, QFilterCondition> {
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+extension WatchlistEntryQueryFilter
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QFilterCondition> {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       createdAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -270,7 +286,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       createdAtGreaterThan(
     DateTime value, {
     bool include = false,
@@ -284,7 +300,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       createdAtLessThan(
     DateTime value, {
     bool include = false,
@@ -298,7 +314,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       createdAtBetween(
     DateTime lower,
     DateTime upper, {
@@ -316,8 +332,26 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
-      estimatedReleaseDateEqualTo(DateTime value) {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      estimatedReleaseDateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'estimatedReleaseDate',
+      ));
+    });
+  }
+
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      estimatedReleaseDateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'estimatedReleaseDate',
+      ));
+    });
+  }
+
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      estimatedReleaseDateEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'estimatedReleaseDate',
@@ -326,9 +360,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       estimatedReleaseDateGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -340,9 +374,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       estimatedReleaseDateLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -354,10 +388,10 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       estimatedReleaseDateBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -372,8 +406,26 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
-      finishedAtEqualTo(DateTime value) {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      finishedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'finishedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      finishedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'finishedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      finishedAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'finishedAt',
@@ -382,9 +434,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       finishedAtGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -396,9 +448,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       finishedAtLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -410,10 +462,10 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       finishedAtBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -428,7 +480,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition> idEqualTo(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -438,7 +490,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       idGreaterThan(
     Id value, {
     bool include = false,
@@ -452,7 +504,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       idLessThan(
     Id value, {
     bool include = false,
@@ -466,7 +518,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition> idBetween(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -483,7 +535,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       isFinishedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -493,7 +545,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       isRecommendableEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -503,7 +555,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       isUpcomingEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -513,8 +565,8 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
-      priorityEqualTo(int value) {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      priorityEqualTo(WatchlistEntryPriority value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'priority',
@@ -523,9 +575,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       priorityGreaterThan(
-    int value, {
+    WatchlistEntryPriority value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -537,9 +589,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       priorityLessThan(
-    int value, {
+    WatchlistEntryPriority value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -551,10 +603,10 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       priorityBetween(
-    int lower,
-    int upper, {
+    WatchlistEntryPriority lower,
+    WatchlistEntryPriority upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -569,7 +621,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -583,7 +635,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleGreaterThan(
     String value, {
     bool include = false,
@@ -599,7 +651,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleLessThan(
     String value, {
     bool include = false,
@@ -615,7 +667,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleBetween(
     String lower,
     String upper, {
@@ -635,7 +687,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -649,7 +701,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -663,7 +715,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -674,7 +726,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -685,7 +737,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -695,7 +747,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       titleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -705,7 +757,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -719,7 +771,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeGreaterThan(
     String value, {
     bool include = false,
@@ -735,7 +787,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeLessThan(
     String value, {
     bool include = false,
@@ -751,7 +803,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeBetween(
     String lower,
     String upper, {
@@ -771,7 +823,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -785,7 +837,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -799,7 +851,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -810,7 +862,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -821,7 +873,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -831,7 +883,7 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       typeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -841,8 +893,26 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
-      updatedAtEqualTo(DateTime value) {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
+      updatedAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'updatedAt',
@@ -851,9 +921,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       updatedAtGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -865,9 +935,9 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       updatedAtLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -879,10 +949,10 @@ extension WatchListEntryQueryFilter
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterFilterCondition>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterFilterCondition>
       updatedAtBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -898,141 +968,141 @@ extension WatchListEntryQueryFilter
   }
 }
 
-extension WatchListEntryQueryObject
-    on QueryBuilder<WatchListEntry, WatchListEntry, QFilterCondition> {}
+extension WatchlistEntryQueryObject
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QFilterCondition> {}
 
-extension WatchListEntryQueryLinks
-    on QueryBuilder<WatchListEntry, WatchListEntry, QFilterCondition> {}
+extension WatchlistEntryQueryLinks
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QFilterCondition> {}
 
-extension WatchListEntryQuerySortBy
-    on QueryBuilder<WatchListEntry, WatchListEntry, QSortBy> {
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByCreatedAt() {
+extension WatchlistEntryQuerySortBy
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QSortBy> {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByEstimatedReleaseDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedReleaseDate', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByEstimatedReleaseDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedReleaseDate', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByFinishedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finishedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByFinishedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finishedAt', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByIsFinished() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isFinished', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByIsFinishedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isFinished', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByIsRecommendable() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isRecommendable', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByIsRecommendableDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isRecommendable', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByIsUpcoming() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isUpcoming', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByIsUpcomingDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isUpcoming', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByPriority() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByPriority() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'priority', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByPriorityDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'priority', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByTitle() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByTitleDesc() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByType() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByTypeDesc() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> sortByUpdatedAt() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
@@ -1040,147 +1110,147 @@ extension WatchListEntryQuerySortBy
   }
 }
 
-extension WatchListEntryQuerySortThenBy
-    on QueryBuilder<WatchListEntry, WatchListEntry, QSortThenBy> {
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByCreatedAt() {
+extension WatchlistEntryQuerySortThenBy
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QSortThenBy> {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByEstimatedReleaseDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedReleaseDate', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByEstimatedReleaseDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'estimatedReleaseDate', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByFinishedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finishedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByFinishedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finishedAt', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenById() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByIsFinished() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isFinished', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByIsFinishedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isFinished', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByIsRecommendable() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isRecommendable', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByIsRecommendableDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isRecommendable', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByIsUpcoming() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isUpcoming', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByIsUpcomingDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isUpcoming', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByPriority() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByPriority() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'priority', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByPriorityDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'priority', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByTitle() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByTitleDesc() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByType() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByTypeDesc() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.desc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy> thenByUpdatedAt() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy> thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QAfterSortBy>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QAfterSortBy>
       thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
@@ -1188,71 +1258,71 @@ extension WatchListEntryQuerySortThenBy
   }
 }
 
-extension WatchListEntryQueryWhereDistinct
-    on QueryBuilder<WatchListEntry, WatchListEntry, QDistinct> {
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+extension WatchlistEntryQueryWhereDistinct
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct> {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByEstimatedReleaseDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'estimatedReleaseDate');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByFinishedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'finishedAt');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByIsFinished() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isFinished');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByIsRecommendable() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isRecommendable');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByIsUpcoming() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isUpcoming');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct> distinctByPriority() {
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct> distinctByPriority() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'priority');
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct> distinctByTitle(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct> distinctByType(
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct> distinctByType(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<WatchListEntry, WatchListEntry, QDistinct>
+  QueryBuilder<WatchlistEntry, WatchlistEntry, QDistinct>
       distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
@@ -1260,72 +1330,74 @@ extension WatchListEntryQueryWhereDistinct
   }
 }
 
-extension WatchListEntryQueryProperty
-    on QueryBuilder<WatchListEntry, WatchListEntry, QQueryProperty> {
-  QueryBuilder<WatchListEntry, int, QQueryOperations> idProperty() {
+extension WatchlistEntryQueryProperty
+    on QueryBuilder<WatchlistEntry, WatchlistEntry, QQueryProperty> {
+  QueryBuilder<WatchlistEntry, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<WatchListEntry, DateTime, QQueryOperations> createdAtProperty() {
+  QueryBuilder<WatchlistEntry, DateTime, QQueryOperations> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
     });
   }
 
-  QueryBuilder<WatchListEntry, DateTime, QQueryOperations>
+  QueryBuilder<WatchlistEntry, DateTime?, QQueryOperations>
       estimatedReleaseDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'estimatedReleaseDate');
     });
   }
 
-  QueryBuilder<WatchListEntry, DateTime, QQueryOperations>
+  QueryBuilder<WatchlistEntry, DateTime?, QQueryOperations>
       finishedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'finishedAt');
     });
   }
 
-  QueryBuilder<WatchListEntry, bool, QQueryOperations> isFinishedProperty() {
+  QueryBuilder<WatchlistEntry, bool, QQueryOperations> isFinishedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isFinished');
     });
   }
 
-  QueryBuilder<WatchListEntry, bool, QQueryOperations>
+  QueryBuilder<WatchlistEntry, bool, QQueryOperations>
       isRecommendableProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isRecommendable');
     });
   }
 
-  QueryBuilder<WatchListEntry, bool, QQueryOperations> isUpcomingProperty() {
+  QueryBuilder<WatchlistEntry, bool, QQueryOperations> isUpcomingProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isUpcoming');
     });
   }
 
-  QueryBuilder<WatchListEntry, int, QQueryOperations> priorityProperty() {
+  QueryBuilder<WatchlistEntry, WatchlistEntryPriority, QQueryOperations>
+      priorityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'priority');
     });
   }
 
-  QueryBuilder<WatchListEntry, String, QQueryOperations> titleProperty() {
+  QueryBuilder<WatchlistEntry, String, QQueryOperations> titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
     });
   }
 
-  QueryBuilder<WatchListEntry, String, QQueryOperations> typeProperty() {
+  QueryBuilder<WatchlistEntry, String, QQueryOperations> typeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'type');
     });
   }
 
-  QueryBuilder<WatchListEntry, DateTime, QQueryOperations> updatedAtProperty() {
+  QueryBuilder<WatchlistEntry, DateTime?, QQueryOperations>
+      updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
     });

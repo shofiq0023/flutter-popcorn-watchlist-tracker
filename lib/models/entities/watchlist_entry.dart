@@ -1,19 +1,20 @@
-
 import 'package:isar/isar.dart';
+import 'package:popcorn/enums/watchlist_entry_type.dart';
 
 part 'watchlist_entry.g.dart';
 
 @Collection()
-class WatchListEntry {
+class WatchlistEntry {
   Id id = Isar.autoIncrement;
   late String title;
   late String type;
-  late int priority;
-  late bool isFinished;
-  late bool isRecommendable;
-  late bool isUpcoming;
-  late DateTime createdAt;
-  late DateTime updatedAt;
-  late DateTime finishedAt;
-  late DateTime estimatedReleaseDate;
+  @Enumerated(EnumType.ordinal)
+  late WatchlistEntryPriority priority = WatchlistEntryPriority.normal;
+  late bool isFinished = false;
+  late bool isRecommendable = false;
+  late bool isUpcoming = false;
+  late DateTime createdAt = DateTime.now();
+  late DateTime? updatedAt;
+  late DateTime? finishedAt;
+  late DateTime? estimatedReleaseDate;
 }

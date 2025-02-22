@@ -1,6 +1,6 @@
 # popcorn
 
-Popcord, a watchlist tracker app with flutter
+Popcorn, a watchlist tracker app with flutter
 
 ## Getting Started
 
