@@ -31,6 +31,9 @@ class WatchlistEntryDatabaseService {
 
   Future<void> add(WatchlistEntry entity) async {
     entity.createdAt = DateTime.now();
+    entity.updatedAt = null;
+    entity.finishedAt = null;
+
     await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
   }
 
