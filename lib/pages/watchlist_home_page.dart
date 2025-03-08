@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/custom_widgets/dialogs/watchlist_entry_create_dialog.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/widgets/dialogs/watchlist_entry_create_dialog.dart';
+import 'package:popcorn/widgets/navigation_drawer.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistHomePage extends StatefulWidget {
@@ -27,12 +28,11 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
               IconButton(onPressed: () {}, icon: const Icon(Icons.sort)),
             ],
           ),
+          drawer: const MyNavigationDrawer(),
           body: FutureBuilder<List<WatchlistEntry>>(
             future: provider.watchList,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
+              if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(child: Text('No entries found'));
