@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/widgets/dialogs/watchlist_entry_detail_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_finished_confirmation_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,9 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        showUpdateDialog();
+      },
       child: Container(
         clipBehavior: Clip.antiAlias,
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
@@ -113,6 +116,13 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
           ),
         ),
       ),
+    );
+  }
+
+  void showUpdateDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => WatchlistEntryDetailDialog(watchlistEntry: widget.watchlistEntry),
     );
   }
 }

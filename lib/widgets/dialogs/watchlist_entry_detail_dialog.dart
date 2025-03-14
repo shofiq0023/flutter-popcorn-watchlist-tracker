@@ -5,25 +5,44 @@ import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:provider/provider.dart';
 
-class WatchlistEntryCreateDialog extends StatefulWidget {
-  const WatchlistEntryCreateDialog({super.key});
+class WatchlistEntryDetailDialog extends StatefulWidget {
+  final WatchlistEntry watchlistEntry;
+
+  const WatchlistEntryDetailDialog({super.key, required this.watchlistEntry});
 
   @override
-  State<WatchlistEntryCreateDialog> createState() =>
-      _WatchlistEntryCreateDialogState();
+  State<WatchlistEntryDetailDialog> createState() =>
+      _WatchlistEntryDetailDialogState();
 }
 
-class _WatchlistEntryCreateDialogState
-    extends State<WatchlistEntryCreateDialog> {
+class _WatchlistEntryDetailDialogState
+    extends State<WatchlistEntryDetailDialog> {
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _estimatedReleaseDateController =
       TextEditingController();
 
   bool _titleError = false;
-  bool _estimatedDateError = false;
   bool _isUpcomingEntry = false;
   String? _entryType;
   WatchlistEntryPriority _selectedPriority = WatchlistEntryPriority.normal;
+  bool _isFinished = false;
+  bool _isRecommendable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WatchlistEntry entry = widget.watchlistEntry;
+    _titleController.text = entry.title;
+    _entryType = entry.type;
+    _selectedPriority = entry.priority;
+    _isFinished = entry.isFinished;
+    _isRecommendable = entry.isRecommendable;
+    _isUpcomingEntry = entry.isUpcoming;
+    _estimatedReleaseDateController.text = getFormattedDateStr(
+      entry.estimatedReleaseDate,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,13 +134,6 @@ class _WatchlistEntryCreateDialogState
                 decoration: InputDecoration(
                   labelText: "Estimated release date",
                   suffixIcon: Icon(Icons.calendar_month_rounded),
-                  error:
-                      _estimatedDateError
-                          ? const Text(
-                            "Please select a date!",
-                            style: TextStyle(color: Colors.redAccent),
-                          )
-                          : null,
                 ),
                 onTap: () => _selectDate(context), // Show date picker on tap
               ),
@@ -243,15 +255,7 @@ class _WatchlistEntryCreateDialogState
   }
 
   bool isSubmittable() {
-    if (_titleController.text.isNotEmpty && _entryType != null) {
-      if (_isUpcomingEntry && _estimatedReleaseDateController.text.isEmpty) {
-        return false;
-      }
-
-      return true;
-    } else {
-      return false;
-    }
+    return _titleController.text.isNotEmpty && _entryType != null;
   }
 
   DateTime strDateToDateTime(String strDate) {
