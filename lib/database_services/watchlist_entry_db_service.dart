@@ -37,7 +37,20 @@ class WatchlistEntryDatabaseService {
     await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
   }
 
-  // TODO: Update
+  Future<void> update(WatchlistEntry entity) async {
+    entity.updatedAt = DateTime.now();
+    await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
+  }
 
-  // TODO: Delete
+  Future<void> finished(WatchlistEntry entity) async {
+    entity.updatedAt = DateTime.now();
+    entity.isFinished = true;
+    entity.finishedAt = DateTime.now();
+
+    await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
+  }
+
+  Future<void> delete(int entityId) async {
+    await isar.writeTxn(() => isar.watchlistEntrys.delete(entityId));
+  }
 }

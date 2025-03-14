@@ -27,100 +27,103 @@ class _WatchlistEntryCreateDialogState
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Create a new entry"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Title of the show
-          TextField(
-            controller: _titleController,
-            textCapitalization: TextCapitalization.words,
-            style: const TextStyle(color: Colors.black),
-            decoration: InputDecoration(
-              error:
-                  _titleError
-                      ? const Text(
-                        "Please enter a title!",
-                        style: TextStyle(color: Colors.redAccent),
-                      )
-                      : null,
-              label: Text(
-                "Title of the show",
-                style: TextStyle(fontSize: 16.0),
-              ),
-            ),
-            onChanged: (value) {
-              if (_titleController.text.isEmpty) {
-                setState(() {
-                  _titleError = true;
-                });
-              } else {
-                setState(() {
-                  _titleError = false;
-                });
-              }
-            },
-          ),
-
-          // For spacing
-          const SizedBox(height: 10.0),
-
-          // Dropdown for type of the show
-          DropdownButton<String>(
-            value: _entryType,
-            isExpanded: true,
-            hint: const Text("Select type of the show"),
-            onChanged: (String? type) {
-              setState(() => _entryType = type!);
-            },
-            items: _getEntryTypes(),
-          ),
-
-          // For spacing
-          const SizedBox(height: 10.0),
-
-          // Dropdown for priority of the show
-          DropdownButton<WatchlistEntryPriority>(
-            value: _selectedPriority,
-            isExpanded: true,
-            hint: const Text("Select priority of the show"),
-            onChanged: (WatchlistEntryPriority? priority) {
-              setState(() => _selectedPriority = priority!);
-            },
-            items: _getPriorityDropdown(),
-          ),
-
-          // Checkbox to determine if the show is upcoming
-          CheckboxListTile(
-            title: Text("Upcoming"),
-            value: _isUpcomingEntry,
-            onChanged: (bool? newValue) {
-              setState(() {
-                _isUpcomingEntry = newValue!;
-              });
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-            contentPadding: EdgeInsets.zero,
-          ),
-
-          // Estimated release date
-          Visibility(
-            visible: _isUpcomingEntry,
-            child: TextField(
-              controller: _estimatedReleaseDateController,
-              readOnly: true, // Prevent manual typing
+      content: SizedBox(
+        width: 600,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Title of the show
+            TextField(
+              controller: _titleController,
+              textCapitalization: TextCapitalization.words,
+              style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                labelText: "Estimated release date",
-                suffixIcon: Icon(Icons.calendar_month_rounded),
+                error:
+                    _titleError
+                        ? const Text(
+                          "Please enter a title!",
+                          style: TextStyle(color: Colors.redAccent),
+                        )
+                        : null,
+                label: Text(
+                  "Title of the show",
+                  style: TextStyle(fontSize: 16.0),
+                ),
               ),
-              onTap: () => _selectDate(context), // Show date picker on tap
+              onChanged: (value) {
+                if (_titleController.text.isEmpty) {
+                  setState(() {
+                    _titleError = true;
+                  });
+                } else {
+                  setState(() {
+                    _titleError = false;
+                  });
+                }
+              },
             ),
-          ),
-        ],
+
+            // For spacing
+            const SizedBox(height: 10.0),
+
+            // Dropdown for type of the show
+            DropdownButton<String>(
+              value: _entryType,
+              isExpanded: true,
+              hint: const Text("Select type of the show"),
+              onChanged: (String? type) {
+                setState(() => _entryType = type!);
+              },
+              items: _getEntryTypes(),
+            ),
+
+            // For spacing
+            const SizedBox(height: 10.0),
+
+            // Dropdown for priority of the show
+            DropdownButton<WatchlistEntryPriority>(
+              value: _selectedPriority,
+              isExpanded: true,
+              hint: const Text("Select priority of the show"),
+              onChanged: (WatchlistEntryPriority? priority) {
+                setState(() => _selectedPriority = priority!);
+              },
+              items: _getPriorityDropdown(),
+            ),
+
+            // Checkbox to determine if the show is upcoming
+            CheckboxListTile(
+              title: Text("Upcoming"),
+              value: _isUpcomingEntry,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  _isUpcomingEntry = newValue!;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+            ),
+
+            // Estimated release date
+            Visibility(
+              visible: _isUpcomingEntry,
+              child: TextField(
+                controller: _estimatedReleaseDateController,
+                readOnly: true, // Prevent manual typing
+                decoration: InputDecoration(
+                  labelText: "Estimated release date",
+                  suffixIcon: Icon(Icons.calendar_month_rounded),
+                ),
+                onTap: () => _selectDate(context), // Show date picker on tap
+              ),
+            ),
+          ],
+        ),
       ),
 
       actions: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             // Close button
             MaterialButton(

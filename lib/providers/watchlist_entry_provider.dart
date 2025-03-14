@@ -68,4 +68,14 @@ class WatchlistEntryProvider extends ChangeNotifier {
     await db.add(entity);
     notifyListeners();
   }
+
+  Future<void> update(WatchlistEntry entity) async {
+    await db.update(entity);
+    notifyListeners();
+  }
+
+  Future<void> finished(WatchlistEntry entity) async {
+    await db.finished(entity);
+    notifyListeners();
+  }
 }

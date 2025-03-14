@@ -3,6 +3,7 @@ import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_create_dialog.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
+import 'package:popcorn/widgets/watchlist_item_widget.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistHomePage extends StatefulWidget {
@@ -43,9 +44,7 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
               return ListView.builder(
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(entries[index].title),
-                  );
+                  return WatchlistItemWidget(watchlistEntry: entries[index]);
                 },
               );
             },

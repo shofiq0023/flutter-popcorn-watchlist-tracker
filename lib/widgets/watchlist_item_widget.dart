@@ -1,0 +1,118 @@
+import 'package:flutter/material.dart';
+import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/widgets/dialogs/watchlist_entry_finished_confirmation_dialog.dart';
+import 'package:provider/provider.dart';
+
+class WatchlistItemWidget extends StatefulWidget {
+  final WatchlistEntry watchlistEntry;
+
+  const WatchlistItemWidget({super.key, required this.watchlistEntry});
+
+  @override
+  State<WatchlistItemWidget> createState() => _WatchlistItemWidgetState();
+}
+
+class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5.0),
+          boxShadow: const <BoxShadow>[
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.2),
+              blurRadius: 3,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+
+        // Main card content
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Priority tag
+              Container(
+                width: 4.0,
+                // color: GlobalData.getPriorityColorForCard(
+                //   widget.watchListModel.priority,
+                // ),
+                color: Colors.red,
+              ),
+
+              // Padding between priority tag and titles
+              const SizedBox(width: 12.0),
+
+              // Title and delete button
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.watchlistEntry.title,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20.0,
+                                fontVariations: const <FontVariation>[
+                                  FontVariation('wght', 700.0),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              widget.watchlistEntry.type,
+                              style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 10.0,
+                                fontVariations: const <FontVariation>[
+                                  FontVariation('wght', 100.0),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Delete button
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder:
+                              (context) => WatchlistEntryFinishedDialog(
+                                watchlistEntry: widget.watchlistEntry,
+                              ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 28.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Ending padding
+              const SizedBox(width: 20.0),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
