@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/enums/watchlist_entry_type.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/widgets/dialogs/delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_detail_dialog.dart';
@@ -24,6 +25,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
         decoration: BoxDecoration(
           color: Colors.white,
+          border: getBorderStyleBasedOnUpcomingStatus(),
           borderRadius: BorderRadius.circular(5.0),
           boxShadow: const <BoxShadow>[
             BoxShadow(
@@ -45,7 +47,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                 // color: GlobalData.getPriorityColorForCard(
                 //   widget.watchListModel.priority,
                 // ),
-                color: Colors.red,
+                color: getPriorityBasedColor(),
               ),
 
               /// Padding between priority tag and titles
@@ -141,6 +143,31 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
           (context) =>
               WatchlistEntryDetailDialog(watchlistEntry: widget.watchlistEntry),
     );
+  }
+
+  Color? getPriorityBasedColor() {
+    WatchlistEntryPriority entryPriority = widget.watchlistEntry.priority;
+
+    if (entryPriority.val == 1) {
+      return Colors.red[700];
+    } else if (entryPriority.val == 2) {
+      return Colors.red[400];
+    }
+
+    return Colors.transparent;
+  }
+
+  Border? getBorderStyleBasedOnUpcomingStatus() {
+    WatchlistEntry entry = widget.watchlistEntry;
+
+    if (entry.isUpcoming) {
+      return Border.all(
+        color: Colors.black38, // Border color
+        width: 2.0, // Border width
+      );
+    }
+
+    return null;
   }
 }
 
