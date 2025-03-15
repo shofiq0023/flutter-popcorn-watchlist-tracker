@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/widgets/dialogs/delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_detail_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_finished_confirmation_dialog.dart';
 
 class WatchlistItemWidget extends StatefulWidget {
   final WatchlistEntry watchlistEntry;
-
   const WatchlistItemWidget({super.key, required this.watchlistEntry});
 
   @override
@@ -34,12 +34,12 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
           ],
         ),
 
-        // Main card content
+        /// Main card content
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Priority tag
+              /// Priority tag
               Container(
                 width: 4.0,
                 // color: GlobalData.getPriorityColorForCard(
@@ -48,10 +48,10 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                 color: Colors.red,
               ),
 
-              // Padding between priority tag and titles
+              /// Padding between priority tag and titles
               const SizedBox(width: 12.0),
 
-              // Title and delete button
+              /// Title and finish/delete button
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,28 +87,45 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                       ),
                     ),
 
-                    // Delete button
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder:
-                              (context) => WatchlistEntryFinishedDialog(
-                                watchlistEntry: widget.watchlistEntry,
-                              ),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                        size: 28.0,
-                      ),
-                    ),
+                    /// Finish/Delete button
+                    widget.watchlistEntry.isFinished
+                        ? IconButton( /// Delete Button
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => DeleteConfirmationDialog(
+                                    watchlistEntry: widget.watchlistEntry,
+                                  ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.delete_forever,
+                            color: Colors.red,
+                            size: 28.0,
+                          ),
+                        )
+                        : IconButton( /// Finish button
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => WatchlistEntryFinishedDialog(
+                                    watchlistEntry: widget.watchlistEntry,
+                                  ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 28.0,
+                          ),
+                        ),
                   ],
                 ),
               ),
 
-              // Ending padding
+              /// Ending padding
               const SizedBox(width: 20.0),
             ],
           ),
@@ -120,7 +137,10 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
   void showUpdateDialog() {
     showDialog(
       context: context,
-      builder: (context) => WatchlistEntryDetailDialog(watchlistEntry: widget.watchlistEntry),
+      builder:
+          (context) =>
+              WatchlistEntryDetailDialog(watchlistEntry: widget.watchlistEntry),
     );
   }
 }
+

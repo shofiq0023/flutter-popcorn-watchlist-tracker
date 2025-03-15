@@ -11,6 +11,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
   bool _isSearching = false;
 
   List<WatchlistEntry> _watchList = [];
+  List<WatchlistEntry> _finishedWatchList = [];
 
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
@@ -71,6 +72,18 @@ class WatchlistEntryProvider extends ChangeNotifier {
     return filteredWatchList;
   }
 
+  Future<List<WatchlistEntry>> get finishedWatchList async {
+    String searchText = searchTextController.text.toLowerCase();
+    _finishedWatchList = await db.getFinishedEntries();
+
+    if (searchText.isEmpty) {
+      return _finishedWatchList;
+    }
+
+    List<WatchlistEntry> filteredWatchList = _finishedWatchList.where((w) => w.title.toLowerCase().contains(searchText)).toList();
+    return filteredWatchList;
+  }
+
   Future<void> add(WatchlistEntry entity) async {
     await db.add(entity);
     notifyListeners();
@@ -83,6 +96,11 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
   Future<void> finished(WatchlistEntry entity) async {
     await db.finished(entity);
+    notifyListeners();
+  }
+
+  Future<void> delete(WatchlistEntry entity) async {
+    await db.delete(entity.id);
     notifyListeners();
   }
 }

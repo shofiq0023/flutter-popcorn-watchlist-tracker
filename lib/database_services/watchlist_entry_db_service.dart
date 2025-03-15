@@ -29,6 +29,17 @@ class WatchlistEntryDatabaseService {
     return entries;
   }
 
+  Future<List<WatchlistEntry>> getFinishedEntries() async {
+    List<WatchlistEntry> entries =
+    await isar.watchlistEntrys
+        .filter()
+        .isFinishedEqualTo(true)
+        .sortByPriority()
+        .findAll();
+
+    return entries;
+  }
+
   Future<void> add(WatchlistEntry entity) async {
     entity.createdAt = DateTime.now();
     entity.updatedAt = null;
