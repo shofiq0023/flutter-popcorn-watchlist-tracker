@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/pages/finished_watchlist_page.dart';
+import 'package:popcorn/pages/unfinished_watchlist_page.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/widgets/custom_bottom_navigation_bar.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_create_dialog.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
 import 'package:popcorn/widgets/watchlist_item_widget.dart';
@@ -14,6 +17,8 @@ class WatchlistHomePage extends StatefulWidget {
 }
 
 class _WatchlistHomePageState extends State<WatchlistHomePage> {
+  int pageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WatchlistEntryProvider>(
@@ -30,35 +35,21 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
             ],
           ),
           drawer: const MyNavigationDrawer(),
-          body: FutureBuilder<List<WatchlistEntry>>(
-            future: provider.watchList,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('No entries found'));
-              }
-
-              final entries = snapshot.data!;
-
-              return ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.only(
-                  left: 5.0,
-                  right: 5.0,
-                  top: 5.0,
-                  bottom: 60.0,
-                ),
-                itemCount: entries.length,
-                itemBuilder: (context, index) {
-                  return WatchlistItemWidget(watchlistEntry: entries[index]);
-                },
-              );
+          bottomNavigationBar: CustomBottomNavigationBar(
+            onIndexSelected: (index) {
+              setState(() {
+                pageIndex = index;
+              });
             },
           ),
+          body:
+              [
+                const FinishedWatchlistPage(),
+                const UnfinishedWatchlistPage(),
+              ][pageIndex],
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              showTaskAddingDialogue();
+              showEntryCreationDialog();
             },
             child: const Icon(Icons.add, size: 32.0),
           ),
@@ -67,7 +58,7 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
     );
   }
 
-  void showTaskAddingDialogue() {
+  void showEntryCreationDialog() {
     showDialog(
       context: context,
       builder: (context) => const WatchlistEntryCreateDialog(),
