@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import 'package:popcorn/database_services/watchlist_entry_db_service.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 
@@ -17,12 +16,14 @@ class WatchlistEntryProvider extends ChangeNotifier {
     db = WatchlistEntryDatabaseService();
   }
 
+  /// Build dynamic AppTitle bar
   Widget buildTitle() {
     if (_isSearching) {
       return TextField(
         controller: searchTextController,
         onChanged: (value) => setSearchText(value),
         decoration: InputDecoration(
+          border: InputBorder.none,
           hintText: searchToggleTitle,
           suffixIcon:
               searchTextController.text.isEmpty
@@ -59,9 +60,15 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
   Future<List<WatchlistEntry>> get watchList async {
+    String searchText = searchTextController.text.toLowerCase();
     _watchList = await db.getUnfinishedEntries();
 
-    return _watchList;
+    if (searchText.isEmpty) {
+      return _watchList;
+    }
+
+    List<WatchlistEntry> filteredWatchList = _watchList.where((w) => w.title.toLowerCase().contains(searchText)).toList();
+    return filteredWatchList;
   }
 
   Future<void> add(WatchlistEntry entity) async {
