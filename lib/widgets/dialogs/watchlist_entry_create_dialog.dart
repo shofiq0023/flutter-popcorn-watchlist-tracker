@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:popcorn/enums/watchlist_entry_type.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistEntryCreateDialog extends StatefulWidget {
@@ -13,14 +14,11 @@ class WatchlistEntryCreateDialog extends StatefulWidget {
       _WatchlistEntryCreateDialogState();
 }
 
-class _WatchlistEntryCreateDialogState
-    extends State<WatchlistEntryCreateDialog> {
+class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _estimatedReleaseDateController =
-      TextEditingController();
+  final TextEditingController _estimatedReleaseDateController = TextEditingController();
 
   bool _titleError = false;
-  bool _estimatedDateError = false;
   bool _isUpcomingEntry = false;
   String? _entryType;
   WatchlistEntryPriority _selectedPriority = WatchlistEntryPriority.normal;
@@ -34,7 +32,7 @@ class _WatchlistEntryCreateDialogState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Title of the show
+            /// Title of the entry
             TextField(
               controller: _titleController,
               textCapitalization: TextCapitalization.words,
@@ -48,7 +46,7 @@ class _WatchlistEntryCreateDialogState
                         )
                         : null,
                 label: Text(
-                  "Title of the show",
+                  "Title of the entry",
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
@@ -65,35 +63,35 @@ class _WatchlistEntryCreateDialogState
               },
             ),
 
-            // For spacing
+            /// For spacing
             const SizedBox(height: 10.0),
 
-            // Dropdown for type of the show
+            /// Dropdown for type of the show
             DropdownButton<String>(
               value: _entryType,
               isExpanded: true,
-              hint: const Text("Select type of the show"),
+              hint: const Text("Select type of the entry"),
               onChanged: (String? type) {
                 setState(() => _entryType = type!);
               },
               items: _getEntryTypes(),
             ),
 
-            // For spacing
+            /// For spacing
             const SizedBox(height: 10.0),
 
-            // Dropdown for priority of the show
+            /// Dropdown for priority of the show
             DropdownButton<WatchlistEntryPriority>(
               value: _selectedPriority,
               isExpanded: true,
-              hint: const Text("Select priority of the show"),
+              hint: const Text("Select priority of the entry"),
               onChanged: (WatchlistEntryPriority? priority) {
                 setState(() => _selectedPriority = priority!);
               },
-              items: _getPriorityDropdown(),
+              items: Utils.getPriorityDropdown(),
             ),
 
-            // Checkbox to determine if the show is upcoming
+            /// Checkbox to determine if the show is upcoming
             CheckboxListTile(
               title: Text("Upcoming"),
               value: _isUpcomingEntry,
@@ -106,7 +104,7 @@ class _WatchlistEntryCreateDialogState
               contentPadding: EdgeInsets.zero,
             ),
 
-            // Estimated release date
+            /// Estimated release date
             Visibility(
               visible: _isUpcomingEntry,
               child: TextField(
@@ -115,13 +113,6 @@ class _WatchlistEntryCreateDialogState
                 decoration: InputDecoration(
                   labelText: "Estimated release date",
                   suffixIcon: Icon(Icons.calendar_month_rounded),
-                  error:
-                      _estimatedDateError
-                          ? const Text(
-                            "Please select a date!",
-                            style: TextStyle(color: Colors.redAccent),
-                          )
-                          : null,
                 ),
                 onTap: () => _selectDate(context), // Show date picker on tap
               ),
@@ -134,15 +125,15 @@ class _WatchlistEntryCreateDialogState
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // Close button
+            /// Close button
             MaterialButton(
-              child: const Text("Close", style: TextStyle(color: Colors.red)),
+              child: const Text("CLOSE"),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
 
-            // Create button
+            /// Create button
             Consumer<WatchlistEntryProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
@@ -151,7 +142,7 @@ class _WatchlistEntryCreateDialogState
                           ? () => _createWatchlistEntry(provider, context)
                           : null,
                   child: Text(
-                    "Create",
+                    "CREATE",
                     style: TextStyle(
                       color: isSubmittable() ? Colors.green : Colors.grey,
                     ),
@@ -165,6 +156,7 @@ class _WatchlistEntryCreateDialogState
     );
   }
 
+  /// Add a new entry to the database
   void _createWatchlistEntry(
     WatchlistEntryProvider provider,
     BuildContext context,
@@ -176,7 +168,7 @@ class _WatchlistEntryCreateDialogState
     entry.isUpcoming = _isUpcomingEntry;
     entry.estimatedReleaseDate =
         _isUpcomingEntry
-            ? strDateToDateTime(_estimatedReleaseDateController.text)
+            ? Utils.strDateToDateTime(_estimatedReleaseDateController.text)
             : null;
 
     provider.add(entry);
@@ -192,25 +184,7 @@ class _WatchlistEntryCreateDialogState
         .toList();
   }
 
-  // Convert the priority enum to dropdown
-  List<DropdownMenuItem<WatchlistEntryPriority>> _getPriorityDropdown() {
-    return WatchlistEntryPriority.values
-        .map(
-          (p) => DropdownMenuItem(
-            value: p,
-            child: Text(
-              "${_capitalized(p.toString().split(".").last)} Priority",
-            ),
-          ),
-        )
-        .toList();
-  }
-
-  String _capitalized(String str) {
-    return str[0].toUpperCase() + str.substring(1);
-  }
-
-  // Function to show the date picker
+  /// Show date picker popup
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
@@ -220,28 +194,12 @@ class _WatchlistEntryCreateDialogState
 
     if (picked != null) {
       setState(() {
-        _estimatedReleaseDateController.text = getFormattedDateStr(picked);
+        _estimatedReleaseDateController.text = Utils.dateTimeToStrDate(picked);
       });
     }
   }
 
-  String getFormattedDateStr(DateTime? dateTimeStr) {
-    if (dateTimeStr == null) {
-      return "";
-    }
-
-    String day =
-        dateTimeStr.day <= 9
-            ? "0${dateTimeStr.day}"
-            : dateTimeStr.day.toString();
-    String month =
-        dateTimeStr.month <= 9
-            ? "0${dateTimeStr.month}"
-            : dateTimeStr.month.toString();
-
-    return "$day/$month/${dateTimeStr.year}";
-  }
-
+  /// Check the title, entry type, upcoming status and estimated release date
   bool isSubmittable() {
     if (_titleController.text.isNotEmpty && _entryType != null) {
       if (_isUpcomingEntry && _estimatedReleaseDateController.text.isEmpty) {
@@ -254,10 +212,4 @@ class _WatchlistEntryCreateDialogState
     }
   }
 
-  DateTime strDateToDateTime(String strDate) {
-    DateFormat format = DateFormat("dd/MM/yyyy");
-    DateTime parsedDate = format.parse(strDate);
-
-    return parsedDate; // Output: 2025-03-14 00:00:00.000
-  }
 }

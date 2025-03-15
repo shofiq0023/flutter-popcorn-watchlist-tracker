@@ -43,7 +43,7 @@ class _WatchlistEntryFinishedDialogState extends State<WatchlistEntryFinishedDia
           children: [
             // Close button
             MaterialButton(
-              child: const Text("No", style: TextStyle(color: Colors.red)),
+              child: const Text("NO"),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -51,7 +51,7 @@ class _WatchlistEntryFinishedDialogState extends State<WatchlistEntryFinishedDia
 
             // Confirmation Button
             MaterialButton(
-              child: const Text("Yes", style: TextStyle(color: Colors.green)),
+              child: const Text("YES", style: TextStyle(color: Colors.green)),
               onPressed: () {
                 widget.watchlistEntry.isRecommendable = _isRecommendable;
                 Provider.of<WatchlistEntryProvider>(
