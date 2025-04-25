@@ -146,11 +146,11 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
   }
 
   Color? getPriorityBasedColor() {
-    WatchlistEntryPriority entryPriority = widget.watchlistEntry.priority;
+    int entryPriority = widget.watchlistEntry.priority;
 
-    if (entryPriority.val == 1) {
+    if (entryPriority == 1) {
       return Colors.red[700];
-    } else if (entryPriority.val == 2) {
+    } else if (entryPriority == 2) {
       return Colors.red[400];
     }
 

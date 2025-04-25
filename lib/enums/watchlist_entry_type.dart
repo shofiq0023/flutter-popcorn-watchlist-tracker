@@ -1,4 +1,3 @@
-import 'package:isar/isar.dart';
 
 enum WatchlistEntryPriority {
   high(1),
@@ -7,5 +6,5 @@ enum WatchlistEntryPriority {
 
   const WatchlistEntryPriority(this.val);
 
-  final short val;
+  final int val;
 }

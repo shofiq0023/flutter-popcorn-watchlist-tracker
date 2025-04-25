@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
-import 'package:popcorn/widgets/dialogs/watchlist_entry_create_dialog.dart';
-import 'package:popcorn/widgets/navigation_drawer.dart';
 import 'package:popcorn/widgets/watchlist_item_widget.dart';
 import 'package:provider/provider.dart';
 

@@ -1,67 +1,55 @@
-import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/objectbox.g.dart';
 
 class WatchlistEntryDatabaseService {
-  static late Isar isar;
+  static late Store store;
+  static late Box<WatchlistEntry> box;
 
-  static Future<Isar> initializeDatabase() async {
-    if (Isar.instanceNames.isEmpty) {
-      final dir = await getApplicationDocumentsDirectory();
-      isar = await Isar.open(
-        [WatchlistEntrySchema],
-        inspector: true,
-        directory: dir.path,
-      );
-    }
-
-    return Future.value(Isar.getInstance());
+  static Future<void> initializeDatabase() async {
+    final dir = await getApplicationDocumentsDirectory();
+    store = await openStore(directory: dir.path);
+    box = store.box<WatchlistEntry>();
   }
 
+  // Get unfinished entries (sorted by priority)
   Future<List<WatchlistEntry>> getUnfinishedEntries() async {
-    List<WatchlistEntry> entries =
-        await isar.watchlistEntrys
-            .filter()
-            .isFinishedEqualTo(false)
-            .sortByPriority()
-            .findAll();
-
-    return entries;
+    Query<WatchlistEntry> query = box.query(WatchlistEntry_.isFinished.equals(false))
+        .order(WatchlistEntry_.priority)
+        .build();
+    return query.find();
   }
 
+  // Get finished entries (sorted by priority)
   Future<List<WatchlistEntry>> getFinishedEntries() async {
-    List<WatchlistEntry> entries =
-    await isar.watchlistEntrys
-        .filter()
-        .isFinishedEqualTo(true)
-        .sortByPriority()
-        .findAll();
-
-    return entries;
+    Query<WatchlistEntry> query = box.query(WatchlistEntry_.isFinished.equals(true))
+        .order(WatchlistEntry_.priority)
+        .build();
+    return query.find();
   }
 
+  // Add new entry
   Future<void> add(WatchlistEntry entity) async {
     entity.createdAt = DateTime.now();
-    entity.updatedAt = null;
-    entity.finishedAt = null;
-
-    await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
+    box.put(entity);
   }
 
+  // Update entry
   Future<void> update(WatchlistEntry entity) async {
     entity.updatedAt = DateTime.now();
-    await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
+    box.put(entity);
   }
 
+  // Mark as finished
   Future<void> finished(WatchlistEntry entity) async {
     entity.updatedAt = DateTime.now();
     entity.isFinished = true;
     entity.finishedAt = DateTime.now();
-
-    await isar.writeTxn(() => isar.watchlistEntrys.put(entity));
+    box.put(entity);
   }
 
+  // Delete entry
   Future<void> delete(int entityId) async {
-    await isar.writeTxn(() => isar.watchlistEntrys.delete(entityId));
+    box.remove(entityId);
   }
 }

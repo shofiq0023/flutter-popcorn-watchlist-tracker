@@ -20,7 +20,7 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
   bool _titleError = false;
   bool _isUpcomingEntry = false;
   String? _entryType;
-  WatchlistEntryPriority _selectedPriority = WatchlistEntryPriority.normal;
+  int _selectedPriority = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +80,11 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
             const SizedBox(height: 10.0),
 
             /// Dropdown for priority of the show
-            DropdownButton<WatchlistEntryPriority>(
+            DropdownButton<int>(
               value: _selectedPriority,
               isExpanded: true,
               hint: const Text("Select priority of the entry"),
-              onChanged: (WatchlistEntryPriority? priority) {
+              onChanged: (int? priority) {
                 setState(() => _selectedPriority = priority!);
               },
               items: Utils.getPriorityDropdown(),

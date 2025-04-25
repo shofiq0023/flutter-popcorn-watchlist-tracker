@@ -23,7 +23,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   bool _titleError = false;
   bool _isUpcomingEntry = false;
   String? _entryType;
-  WatchlistEntryPriority _selectedPriority = WatchlistEntryPriority.normal;
+  int _selectedPriority = 3;
   bool _isEntryFinished = false;
   bool _isEntryRecommendable = false;
 
@@ -106,11 +106,11 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
               const SizedBox(height: 10.0),
           
               /// Dropdown for priority of the show
-              DropdownButton<WatchlistEntryPriority>(
+              DropdownButton<int>(
                 value: _selectedPriority,
                 isExpanded: true,
                 hint: const Text("Select priority of the entry"),
-                onChanged: (WatchlistEntryPriority? priority) {
+                onChanged: (int? priority) {
                   setState(() => _selectedPriority = priority!);
                 },
                 items: Utils.getPriorityDropdown(),

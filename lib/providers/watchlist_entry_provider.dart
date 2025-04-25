@@ -22,6 +22,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
     if (_isSearching) {
       return TextField(
         controller: searchTextController,
+        autofocus: true,
         onChanged: (value) => setSearchText(value),
         decoration: InputDecoration(
           border: InputBorder.none,

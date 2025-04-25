@@ -30,16 +30,12 @@ class Utils {
   }
 
   /// Convert the priority enum to dropdown and add trailing "priority" string
-  static List<DropdownMenuItem<WatchlistEntryPriority>> getPriorityDropdown() {
-    return WatchlistEntryPriority.values
-        .map(
-          (p) => DropdownMenuItem(
-        value: p,
-        child: Text(
-          "${_capitalized(p.toString().split(".").last)} Priority",
-        ),
-      ),
-    ).toList();
+  static List<DropdownMenuItem<int>> getPriorityDropdown() {
+    return [
+      DropdownMenuItem(value: 1, child: Text("High Priority")),
+      DropdownMenuItem(value: 2, child: Text("Medium Priority")),
+      DropdownMenuItem(value: 3, child: Text("Normal Priority")),
+    ];
   }
 
   static String _capitalized(String str) {
