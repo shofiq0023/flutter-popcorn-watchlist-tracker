@@ -33,6 +33,8 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
             ],
           ),
           drawer: const MyNavigationDrawer(),
+          drawerEnableOpenDragGesture: true,
+          drawerEdgeDragWidth: 200,
           bottomNavigationBar: CustomBottomNavigationBar(
             onIndexSelected: (index) {
               setState(() {
