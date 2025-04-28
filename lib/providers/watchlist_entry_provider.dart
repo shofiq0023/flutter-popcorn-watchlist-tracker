@@ -24,9 +24,11 @@ class WatchlistEntryProvider extends ChangeNotifier {
         controller: searchTextController,
         autofocus: true,
         onChanged: (value) => setSearchText(value),
+        style: TextStyle(fontSize: 18.0),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: searchToggleTitle,
+          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 12.0),
           suffixIcon:
               searchTextController.text.isEmpty
                   ? null
@@ -69,7 +71,10 @@ class WatchlistEntryProvider extends ChangeNotifier {
       return _watchList;
     }
 
-    List<WatchlistEntry> filteredWatchList = _watchList.where((w) => w.title.toLowerCase().contains(searchText)).toList();
+    List<WatchlistEntry> filteredWatchList =
+        _watchList
+            .where((w) => w.title.toLowerCase().contains(searchText))
+            .toList();
     return filteredWatchList;
   }
 
@@ -81,7 +86,10 @@ class WatchlistEntryProvider extends ChangeNotifier {
       return _finishedWatchList;
     }
 
-    List<WatchlistEntry> filteredWatchList = _finishedWatchList.where((w) => w.title.toLowerCase().contains(searchText)).toList();
+    List<WatchlistEntry> filteredWatchList =
+        _finishedWatchList
+            .where((w) => w.title.toLowerCase().contains(searchText))
+            .toList();
     return filteredWatchList;
   }
 
