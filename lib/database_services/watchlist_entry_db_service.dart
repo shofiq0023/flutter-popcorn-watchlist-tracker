@@ -1,15 +1,12 @@
-import 'package:path_provider/path_provider.dart';
+import 'package:popcorn/database_services/database_helper.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/objectbox.g.dart';
 
 class WatchlistEntryDatabaseService {
-  static late Store store;
   static late Box<WatchlistEntry> box;
 
-  static Future<void> initializeDatabase() async {
-    final dir = await getApplicationDocumentsDirectory();
-    store = await openStore(directory: dir.path);
-    box = store.box<WatchlistEntry>();
+  WatchlistEntryDatabaseService() {
+    box = DatabaseHelper.store.box<WatchlistEntry>();
   }
 
   // Get unfinished entries (sorted by priority)

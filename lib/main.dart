@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/database_services/watchlist_entry_db_service.dart';
+import 'package:popcorn/database_services/database_helper.dart';
+import 'package:popcorn/pages/entry_category_page.dart';
 import 'package:popcorn/pages/watchlist_home_page.dart';
+import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await WatchlistEntryDatabaseService.initializeDatabase();
+  await DatabaseHelper.initializeDatabase();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => WatchlistEntryProvider()),
+        ChangeNotifierProvider(create: (_) => EntryCategoryProvider()),
       ],
       child: const MyApp(),
     ),
@@ -31,6 +34,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const WatchlistHomePage(),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => const WatchlistHomePage(),
+        '/entry-category': (context) => const EntryCategoryPage(),
+      },
     );
   }
 }

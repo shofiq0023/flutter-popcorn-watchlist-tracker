@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/enums/watchlist_entry_type.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/utils/utils.dart';
@@ -31,7 +30,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   void initState() {
     WatchlistEntry entry = widget.watchlistEntry;
     _titleController.text = entry.title;
-    _entryType = entry.type;
+    // _entryType = entry.category;
     _selectedPriority = entry.priority;
     _isEntryRecommendable = entry.isRecommendable;
 
@@ -239,7 +238,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   void _updateWatchlistEntry(WatchlistEntryProvider provider, BuildContext context) {
     WatchlistEntry entry = widget.watchlistEntry;
     entry.title = _titleController.text;
-    entry.type = _entryType!;
+    // entry.category = _entryType!;
     entry.priority = _selectedPriority;
     entry.isRecommendable = _isEntryRecommendable;
 

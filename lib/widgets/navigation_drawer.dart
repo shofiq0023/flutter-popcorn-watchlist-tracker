@@ -5,6 +5,8 @@ class MyNavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -18,12 +20,7 @@ class MyNavigationDrawer extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Text(
-                          'Hello There',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
+                        Text('Hello There', style: TextStyle(fontSize: 14)),
                         SizedBox(height: 4),
                         Text(
                           'Test User',
@@ -44,25 +41,41 @@ class MyNavigationDrawer extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
+                  // Home Page
                   _buildDrawerItem(
+                    context: context,
                     icon: Icons.list_alt,
                     title: 'List',
                     badgeCount: 2,
-                    selected: true,
+                    selected: currentRoute == '/home',
+                    routeTo: '/home',
                   ),
+
+                  // Category Page
                   _buildDrawerItem(
+                    context: context,
                     icon: Icons.category_outlined,
                     title: 'Categories',
+                    selected: currentRoute == '/entry-category',
                     badgeCount: 2,
                     badgeColor: Colors.red.shade200,
+                    routeTo: '/entry-category',
                   ),
+
+                  // Import Export Page
                   _buildDrawerItem(
+                    context: context,
                     icon: Icons.storage,
                     title: 'Import & Export',
+                    routeTo: '/home',
                   ),
+
+                  // Settings Page
                   _buildDrawerItem(
+                    context: context,
                     icon: Icons.settings,
                     title: 'Settings',
+                    routeTo: '/home',
                   ),
                 ],
               ),
@@ -74,14 +87,19 @@ class MyNavigationDrawer extends StatelessWidget {
   }
 
   Widget _buildDrawerItem({
+    required context,
     required IconData icon,
     required String title,
     int badgeCount = 0,
     bool selected = false,
     Color badgeColor = const Color(0xFFBDB4FE), // Default light purple
+    routeTo = '/home',
   }) {
     return Container(
-      color: selected ? const Color(0xFF6C63FF).withValues(alpha: 0.2) : Colors.transparent,
+      color:
+          selected
+              ? const Color(0xFF6C63FF).withValues(alpha: 0.2)
+              : Colors.transparent,
       child: ListTile(
         leading: Icon(
           icon,
@@ -94,23 +112,33 @@ class MyNavigationDrawer extends StatelessWidget {
             color: selected ? const Color(0xFF6C63FF) : Colors.black,
           ),
         ),
-        trailing: badgeCount > 0
-            ? Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: badgeColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            badgeCount.toString(),
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        )
-            : null,
-        onTap: () {},
+        trailing:
+            badgeCount > 0
+                ? Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: badgeColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    badgeCount.toString(),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+                : null,
+        onTap: () {
+          if (ModalRoute.of(context)?.settings.name != routeTo) {
+            Navigator.pushReplacementNamed(context, routeTo);
+          } else {
+            Navigator.pop(context); // just close drawer if already on that page
+          }
+        },
       ),
     );
   }

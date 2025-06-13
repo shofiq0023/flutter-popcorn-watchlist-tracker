@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/enums/watchlist_entry_type.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/utils/utils.dart';
@@ -162,7 +161,7 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
   ) {
     WatchlistEntry entry = WatchlistEntry();
     entry.title = _titleController.text;
-    entry.type = _entryType!;
+    // entry.category = _entryType!;
     entry.priority = _selectedPriority;
     entry.isUpcoming = _isUpcomingEntry;
     entry.estimatedReleaseDate =

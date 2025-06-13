@@ -14,6 +14,7 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'models/entities/entry_category.dart';
 import 'models/entities/watchlist_entry.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -22,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 2823155504957445601),
       name: 'WatchlistEntry',
-      lastPropertyId: const obx_int.IdUid(11, 2289662213404622908),
+      lastPropertyId: const obx_int.IdUid(12, 6386424801143367599),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -33,11 +34,6 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelProperty(
             id: const obx_int.IdUid(2, 7432568704607605140),
             name: 'title',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 8794483957213056548),
-            name: 'type',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
@@ -79,10 +75,51 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(11, 2289662213404622908),
             name: 'priority',
             type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 6386424801143367599),
+            name: 'categoryId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(1, 290440548427237458),
+            relationTarget: 'EntryCategory')
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(2, 2814220138610795272),
+      name: 'EntryCategory',
+      lastPropertyId: const obx_int.IdUid(4, 5784436567121817249),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 5300978709626280171),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 2610491892562989515),
+            name: 'categoryName',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 5803402652380465026),
+            name: 'createdAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 5784436567121817249),
+            name: 'updatedAt',
+            type: 10,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
-      backlinks: <obx_int.ModelBacklink>[])
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(
+            name: 'watchlistEntries',
+            srcEntity: 'WatchlistEntry',
+            srcField: 'category')
+      ])
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -120,13 +157,13 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 2823155504957445601),
-      lastIndexId: const obx_int.IdUid(0, 0),
+      lastEntityId: const obx_int.IdUid(2, 2814220138610795272),
+      lastIndexId: const obx_int.IdUid(1, 290440548427237458),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [],
+      retiredPropertyUids: const [8794483957213056548],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -135,7 +172,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
   final bindings = <Type, obx_int.EntityDefinition>{
     WatchlistEntry: obx_int.EntityDefinition<WatchlistEntry>(
         model: _entities[0],
-        toOneRelations: (WatchlistEntry object) => [],
+        toOneRelations: (WatchlistEntry object) => [object.category],
         toManyRelations: (WatchlistEntry object) => {},
         getId: (WatchlistEntry object) => object.id,
         setId: (WatchlistEntry object, int id) {
@@ -143,11 +180,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (WatchlistEntry object, fb.Builder fbb) {
           final titleOffset = fbb.writeString(object.title);
-          final typeOffset = fbb.writeString(object.type);
-          fbb.startTable(12);
+          fbb.startTable(13);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleOffset);
-          fbb.addOffset(2, typeOffset);
           fbb.addBool(3, object.isFinished);
           fbb.addBool(4, object.isRecommendable);
           fbb.addBool(5, object.isUpcoming);
@@ -156,6 +191,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(8, object.finishedAt?.millisecondsSinceEpoch);
           fbb.addInt64(9, object.estimatedReleaseDate?.millisecondsSinceEpoch);
           fbb.addInt64(10, object.priority);
+          fbb.addInt64(11, object.category.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -172,8 +208,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..title = const fb.StringReader(asciiOptimization: true)
                 .vTableGet(buffer, rootOffset, 6, '')
-            ..type = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 8, '')
             ..isFinished =
                 const fb.BoolReader().vTableGet(buffer, rootOffset, 10, false)
             ..isRecommendable =
@@ -193,7 +227,52 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 : DateTime.fromMillisecondsSinceEpoch(estimatedReleaseDateValue)
             ..priority =
                 const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
-
+          object.category.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0);
+          object.category.attach(store);
+          return object;
+        }),
+    EntryCategory: obx_int.EntityDefinition<EntryCategory>(
+        model: _entities[1],
+        toOneRelations: (EntryCategory object) => [],
+        toManyRelations: (EntryCategory object) => {
+              obx_int.RelInfo<WatchlistEntry>.toOneBacklink(12, object.id,
+                      (WatchlistEntry srcObject) => srcObject.category):
+                  object.watchlistEntries
+            },
+        getId: (EntryCategory object) => object.id,
+        setId: (EntryCategory object, int id) {
+          object.id = id;
+        },
+        objectToFB: (EntryCategory object, fb.Builder fbb) {
+          final categoryNameOffset = fbb.writeString(object.categoryName);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, categoryNameOffset);
+          fbb.addInt64(2, object.createdAt.millisecondsSinceEpoch);
+          fbb.addInt64(3, object.updatedAt?.millisecondsSinceEpoch);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final updatedAtValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final object = EntryCategory()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..categoryName = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '')
+            ..createdAt = DateTime.fromMillisecondsSinceEpoch(
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0))
+            ..updatedAt = updatedAtValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(updatedAtValue);
+          obx_int.InternalToManyAccess.setRelInfo<EntryCategory>(
+              object.watchlistEntries,
+              store,
+              obx_int.RelInfo<WatchlistEntry>.toOneBacklink(12, object.id,
+                  (WatchlistEntry srcObject) => srcObject.category));
           return object;
         })
   };
@@ -211,39 +290,63 @@ class WatchlistEntry_ {
   static final title =
       obx.QueryStringProperty<WatchlistEntry>(_entities[0].properties[1]);
 
-  /// See [WatchlistEntry.type].
-  static final type =
-      obx.QueryStringProperty<WatchlistEntry>(_entities[0].properties[2]);
-
   /// See [WatchlistEntry.isFinished].
   static final isFinished =
-      obx.QueryBooleanProperty<WatchlistEntry>(_entities[0].properties[3]);
+      obx.QueryBooleanProperty<WatchlistEntry>(_entities[0].properties[2]);
 
   /// See [WatchlistEntry.isRecommendable].
   static final isRecommendable =
-      obx.QueryBooleanProperty<WatchlistEntry>(_entities[0].properties[4]);
+      obx.QueryBooleanProperty<WatchlistEntry>(_entities[0].properties[3]);
 
   /// See [WatchlistEntry.isUpcoming].
   static final isUpcoming =
-      obx.QueryBooleanProperty<WatchlistEntry>(_entities[0].properties[5]);
+      obx.QueryBooleanProperty<WatchlistEntry>(_entities[0].properties[4]);
 
   /// See [WatchlistEntry.createdAt].
   static final createdAt =
-      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[6]);
+      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[5]);
 
   /// See [WatchlistEntry.updatedAt].
   static final updatedAt =
-      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[7]);
+      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[6]);
 
   /// See [WatchlistEntry.finishedAt].
   static final finishedAt =
-      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[8]);
+      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[7]);
 
   /// See [WatchlistEntry.estimatedReleaseDate].
   static final estimatedReleaseDate =
-      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[9]);
+      obx.QueryDateProperty<WatchlistEntry>(_entities[0].properties[8]);
 
   /// See [WatchlistEntry.priority].
   static final priority =
-      obx.QueryIntegerProperty<WatchlistEntry>(_entities[0].properties[10]);
+      obx.QueryIntegerProperty<WatchlistEntry>(_entities[0].properties[9]);
+
+  /// See [WatchlistEntry.category].
+  static final category = obx.QueryRelationToOne<WatchlistEntry, EntryCategory>(
+      _entities[0].properties[10]);
+}
+
+/// [EntryCategory] entity fields to define ObjectBox queries.
+class EntryCategory_ {
+  /// See [EntryCategory.id].
+  static final id =
+      obx.QueryIntegerProperty<EntryCategory>(_entities[1].properties[0]);
+
+  /// See [EntryCategory.categoryName].
+  static final categoryName =
+      obx.QueryStringProperty<EntryCategory>(_entities[1].properties[1]);
+
+  /// See [EntryCategory.createdAt].
+  static final createdAt =
+      obx.QueryDateProperty<EntryCategory>(_entities[1].properties[2]);
+
+  /// See [EntryCategory.updatedAt].
+  static final updatedAt =
+      obx.QueryDateProperty<EntryCategory>(_entities[1].properties[3]);
+
+  /// see [EntryCategory.watchlistEntries]
+  static final watchlistEntries =
+      obx.QueryBacklinkToMany<WatchlistEntry, EntryCategory>(
+          WatchlistEntry_.category);
 }

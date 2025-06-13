@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/enums/watchlist_entry_type.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/widgets/dialogs/delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_detail_dialog.dart';
@@ -75,7 +74,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                               ),
                             ),
                             Text(
-                              widget.watchlistEntry.type,
+                              '',
                               style: TextStyle(
                                 color: Colors.black38,
                                 fontSize: 10.0,
