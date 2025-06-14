@@ -4,25 +4,25 @@ import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/watchlist_item_widget.dart';
 import 'package:provider/provider.dart';
 
-class FinishedWatchlistPage extends StatefulWidget {
-  const FinishedWatchlistPage({super.key});
+class EntriesUnfinishedWindow extends StatefulWidget {
+  const EntriesUnfinishedWindow({super.key});
 
   @override
-  State<FinishedWatchlistPage> createState() => _FinishedWatchlistPageState();
+  State<EntriesUnfinishedWindow> createState() => _EntriesUnfinishedWindowState();
 }
 
-class _FinishedWatchlistPageState extends State<FinishedWatchlistPage> {
+class _EntriesUnfinishedWindowState extends State<EntriesUnfinishedWindow> {
   @override
   Widget build(BuildContext context) {
     return Consumer<WatchlistEntryProvider>(
       builder: (context, provider, child) {
         return FutureBuilder<List<WatchlistEntry>>(
-          future: provider.watchList,
+          future: provider.finishedWatchList,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No entries found'));
+              return Center(child: Text('No finished entries found'));
             }
 
             final entries = snapshot.data!;

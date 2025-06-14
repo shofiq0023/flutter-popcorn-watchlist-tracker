@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/pages/finished_watchlist_page.dart';
-import 'package:popcorn/pages/unfinished_watchlist_page.dart';
+import 'package:popcorn/pages/components/entries_finished_window.dart';
+import 'package:popcorn/pages/components/entries_unfinished_window.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/custom_bottom_navigation_bar.dart';
 import 'package:popcorn/widgets/dialogs/watchlist_entry_create_dialog.dart';
@@ -44,8 +44,8 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
           ),
           body:
               [
-                const FinishedWatchlistPage(),
-                const UnfinishedWatchlistPage(),
+                const EntriesFinishedWindow(),
+                const EntriesUnfinishedWindow(),
               ][pageIndex],
           floatingActionButton: FloatingActionButton(
             onPressed: () {

@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/models/entities/watchlist_entry.dart';
-import 'package:popcorn/providers/watchlist_entry_provider.dart';
-import 'package:popcorn/widgets/watchlist_item_widget.dart';
+import 'package:popcorn/models/entities/entry_category.dart';
+import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/widgets/entry_category_widget.dart';
 import 'package:provider/provider.dart';
 
-class UnfinishedWatchlistPage extends StatefulWidget {
-  const UnfinishedWatchlistPage({super.key});
+class EntryCategoryComponent extends StatefulWidget {
+  const EntryCategoryComponent({super.key});
 
   @override
-  State<UnfinishedWatchlistPage> createState() => _UnfinishedWatchlistPageState();
+  State<EntryCategoryComponent> createState() => _EntryCategoryComponentState();
 }
 
-class _UnfinishedWatchlistPageState extends State<UnfinishedWatchlistPage> {
+class _EntryCategoryComponentState extends State<EntryCategoryComponent> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<WatchlistEntryProvider>(
+    return Consumer<EntryCategoryProvider>(
       builder: (context, provider, child) {
-        return FutureBuilder<List<WatchlistEntry>>(
-          future: provider.finishedWatchList,
+        return FutureBuilder<List<EntryCategory>>(
+          future: provider.categoryList,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No finished entries found'));
+              return Center(child: Text('No categories found'));
             }
 
             final entries = snapshot.data!;
@@ -37,7 +37,7 @@ class _UnfinishedWatchlistPageState extends State<UnfinishedWatchlistPage> {
               ),
               itemCount: entries.length,
               itemBuilder: (context, index) {
-                return WatchlistItemWidget(watchlistEntry: entries[index]);
+                return EntryCategoryItemWidget(entryCategory: entries[index]);
               },
             );
           },
