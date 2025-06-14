@@ -22,7 +22,7 @@ class _UnfinishedWatchlistPageState extends State<UnfinishedWatchlistPage> {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No entries found'));
+              return Center(child: Text('No finished entries found'));
             }
 
             final entries = snapshot.data!;
