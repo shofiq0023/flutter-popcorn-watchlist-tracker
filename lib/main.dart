@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/database_services/database_helper.dart';
 import 'package:popcorn/pages/entry_category_page.dart';
+import 'package:popcorn/pages/import_export_page.dart';
+import 'package:popcorn/pages/settings_page.dart';
 import 'package:popcorn/pages/watchlist_home_page.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
@@ -38,6 +40,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => const WatchlistHomePage(),
         '/entry-category': (context) => const EntryCategoryPage(),
+        '/import-export': (context) => const ImportExportPage(),
+        '/settings': (context) => const SettingsPage()
       },
     );
   }

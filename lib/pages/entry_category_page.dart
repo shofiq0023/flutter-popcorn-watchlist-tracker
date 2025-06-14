@@ -20,7 +20,7 @@ class _EntryCategoryPageState extends State<EntryCategoryPage> {
           drawer: const MyNavigationDrawer(),
           drawerEnableOpenDragGesture: true,
           drawerEdgeDragWidth: 600,
-          body: const Center(child: Text("Nigga")),
+          body: const Center(child: Text("Entry Categories Page")),
         );
       },
     );

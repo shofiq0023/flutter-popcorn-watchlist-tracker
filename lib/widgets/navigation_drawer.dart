@@ -67,7 +67,8 @@ class MyNavigationDrawer extends StatelessWidget {
                     context: context,
                     icon: Icons.storage,
                     title: 'Import & Export',
-                    routeTo: '/home',
+                    selected: currentRoute == '/import-export',
+                    routeTo: '/import-export',
                   ),
 
                   // Settings Page
@@ -75,7 +76,8 @@ class MyNavigationDrawer extends StatelessWidget {
                     context: context,
                     icon: Icons.settings,
                     title: 'Settings',
-                    routeTo: '/home',
+                    selected: currentRoute == '/settings',
+                    routeTo: '/settings',
                   ),
                 ],
               ),
