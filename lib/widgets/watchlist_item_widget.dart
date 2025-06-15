@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
-import 'package:popcorn/widgets/dialogs/delete_confirmation_dialog.dart';
-import 'package:popcorn/widgets/dialogs/watchlist_entry_detail_dialog.dart';
-import 'package:popcorn/widgets/dialogs/watchlist_entry_finished_confirmation_dialog.dart';
+import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
+import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_detail_dialog.dart';
+import 'package:popcorn/widgets/dialogs//watchlist/watchlist_entry_finished_confirmation_dialog.dart';
 
 class WatchlistItemWidget extends StatefulWidget {
   final WatchlistEntry watchlistEntry;
