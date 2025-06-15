@@ -112,4 +112,8 @@ class WatchlistEntryProvider extends ChangeNotifier {
     await db.delete(entity.id);
     notifyListeners();
   }
+
+  int entryCount() {
+    return _watchList.length;
+  }
 }

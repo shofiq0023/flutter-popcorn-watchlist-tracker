@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/providers/entry_category_provider.dart'; // Your other provider
 
 class MyNavigationDrawer extends StatelessWidget {
   const MyNavigationDrawer({super.key});
@@ -37,49 +40,50 @@ class MyNavigationDrawer extends StatelessWidget {
             ),
             const Divider(),
 
-            // Menu Items
+            // Multiple Providers here using Consumer2
             Expanded(
-              child: ListView(
-                children: [
-                  // Home Page
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.list_alt,
-                    title: 'List',
-                    badgeCount: 2,
-                    selected: currentRoute == '/home',
-                    routeTo: '/home',
-                  ),
+              child: Consumer2<WatchlistEntryProvider, EntryCategoryProvider>(
+                builder: (context, watchlistProvider, categoryProvider, child) {
+                  return ListView(
+                    children: [
+                      // Watchlist Badge Count
+                      _buildDrawerItem(
+                        context: context,
+                        icon: Icons.list_alt,
+                        title: 'List',
+                        badgeCount: watchlistProvider.entryCount(),
+                        selected: currentRoute == '/home',
+                        routeTo: '/home',
+                      ),
 
-                  // Category Page
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.category_outlined,
-                    title: 'Categories',
-                    selected: currentRoute == '/entry-category',
-                    badgeCount: 2,
-                    badgeColor: Colors.red.shade200,
-                    routeTo: '/entry-category',
-                  ),
+                      // Category Badge Count (dummy 5 for now, you can use real count later)
+                      _buildDrawerItem(
+                        context: context,
+                        icon: Icons.category_outlined,
+                        title: 'Categories',
+                        badgeCount: 0, // example for category count
+                        badgeColor: Colors.red.shade200,
+                        selected: currentRoute == '/entry-category',
+                        routeTo: '/entry-category',
+                      ),
 
-                  // Import Export Page
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.storage,
-                    title: 'Backup & Restore',
-                    selected: currentRoute == '/import-export',
-                    routeTo: '/import-export',
-                  ),
-
-                  // Settings Page
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.settings,
-                    title: 'Settings',
-                    selected: currentRoute == '/settings',
-                    routeTo: '/settings',
-                  ),
-                ],
+                      _buildDrawerItem(
+                        context: context,
+                        icon: Icons.storage,
+                        title: 'Backup & Restore',
+                        selected: currentRoute == '/import-export',
+                        routeTo: '/import-export',
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        icon: Icons.settings,
+                        title: 'Settings',
+                        selected: currentRoute == '/settings',
+                        routeTo: '/settings',
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -94,14 +98,13 @@ class MyNavigationDrawer extends StatelessWidget {
     required String title,
     int badgeCount = 0,
     bool selected = false,
-    Color badgeColor = const Color(0xFFBDB4FE), // Default light purple
+    Color badgeColor = const Color(0xFFBDB4FE),
     routeTo = '/home',
   }) {
     return Container(
-      color:
-          selected
-              ? const Color(0xFF6C63FF).withValues(alpha: 0.2)
-              : Colors.transparent,
+      color: selected
+          ? const Color(0xFF6C63FF).withOpacity(0.2)
+          : Colors.transparent,
       child: ListTile(
         leading: Icon(
           icon,
@@ -114,31 +117,27 @@ class MyNavigationDrawer extends StatelessWidget {
             color: selected ? const Color(0xFF6C63FF) : Colors.black,
           ),
         ),
-        trailing:
-            badgeCount > 0
-                ? Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: badgeColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    badgeCount.toString(),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-                : null,
+        trailing: badgeCount > 0
+            ? Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: badgeColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            badgeCount.toString(),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        )
+            : null,
         onTap: () {
           if (ModalRoute.of(context)?.settings.name != routeTo) {
             Navigator.pushReplacementNamed(context, routeTo);
           } else {
-            Navigator.pop(context); // just close drawer if already on that page
+            Navigator.pop(context);
           }
         },
       ),
