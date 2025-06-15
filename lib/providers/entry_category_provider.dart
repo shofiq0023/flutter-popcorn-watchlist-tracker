@@ -28,14 +28,14 @@ class EntryCategoryProvider extends ChangeNotifier {
           hintText: searchToggleTitle,
           contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 12.0),
           suffixIcon:
-          searchTextController.text.isEmpty
-              ? null
-              : IconButton(
-            onPressed: () {
-              clearSearch();
-            },
-            icon: const Icon(Icons.clear),
-          ),
+              searchTextController.text.isEmpty
+                  ? null
+                  : IconButton(
+                    onPressed: () {
+                      clearSearch();
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
         ),
       );
     } else {
@@ -62,9 +62,15 @@ class EntryCategoryProvider extends ChangeNotifier {
   }
 
   Future<List<EntryCategory>> get categoryList async {
+    String searchText = searchTextController.text.toLowerCase();
     _entryCategoryList = await db.getAll();
 
-    return _entryCategoryList;
+    List<EntryCategory> filterCategoryList =
+        _entryCategoryList
+            .where((c) => c.categoryName.toLowerCase().contains(searchText))
+            .toList();
+
+    return filterCategoryList;
   }
 
   Future<void> add(EntryCategory entity) async {
