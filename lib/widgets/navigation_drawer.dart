@@ -106,7 +106,7 @@ class MyNavigationDrawer extends StatelessWidget {
   }) {
     return Container(
       color: selected
-          ? const Color(0xFF6C63FF).withOpacity(0.2)
+          ? const Color(0xFF6C63FF).withValues(alpha: 0.2)
           : Colors.transparent,
       child: ListTile(
         leading: Icon(
