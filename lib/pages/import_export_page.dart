@@ -12,11 +12,11 @@ class _ImportExportPageState extends State<ImportExportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Import & Export")),
+      appBar: AppBar(title: Text("Backup & Restore")),
       drawer: const MyNavigationDrawer(),
       drawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: 600,
-      body: const Center(child: Text("Import & Export Page")),
+      body: const Center(child: Text("Backup & Restore Page")),
     );
   }
 }

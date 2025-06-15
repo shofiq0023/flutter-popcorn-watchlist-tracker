@@ -66,7 +66,7 @@ class MyNavigationDrawer extends StatelessWidget {
                   _buildDrawerItem(
                     context: context,
                     icon: Icons.storage,
-                    title: 'Import & Export',
+                    title: 'Backup & Restore',
                     selected: currentRoute == '/import-export',
                     routeTo: '/import-export',
                   ),
