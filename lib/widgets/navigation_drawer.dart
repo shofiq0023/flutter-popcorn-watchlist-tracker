@@ -46,7 +46,7 @@ class MyNavigationDrawer extends StatelessWidget {
                 builder: (context, watchlistProvider, categoryProvider, child) {
                   return ListView(
                     children: [
-                      // Watchlist Badge Count
+                      // Home page
                       _buildDrawerItem(
                         context: context,
                         icon: Icons.list_alt,
@@ -56,7 +56,7 @@ class MyNavigationDrawer extends StatelessWidget {
                         routeTo: '/home',
                       ),
 
-                      // Category Badge Count (dummy 5 for now, you can use real count later)
+                      // Category Page
                       _buildDrawerItem(
                         context: context,
                         icon: Icons.category_outlined,
@@ -67,6 +67,7 @@ class MyNavigationDrawer extends StatelessWidget {
                         routeTo: '/entry-category',
                       ),
 
+                      // Backup and restore page
                       _buildDrawerItem(
                         context: context,
                         icon: Icons.storage,
@@ -74,6 +75,8 @@ class MyNavigationDrawer extends StatelessWidget {
                         selected: currentRoute == '/import-export',
                         routeTo: '/import-export',
                       ),
+
+                      // Settings page
                       _buildDrawerItem(
                         context: context,
                         icon: Icons.settings,
