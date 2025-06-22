@@ -87,4 +87,8 @@ class EntryCategoryProvider extends ChangeNotifier {
     await db.delete(entity.id);
     notifyListeners();
   }
+
+  List<EntryCategory> getEntryCategories() {
+    return _entryCategoryList;
+  }
 }

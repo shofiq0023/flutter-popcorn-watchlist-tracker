@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
-import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
-import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:provider/provider.dart';
 
 class EntryCategoryDeleteConfirmationDialog extends StatefulWidget {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
 
   bool _titleError = false;
   bool _isUpcomingEntry = false;
-  String? _entryType;
+  EntryCategory? _selectedCategory;
   int _selectedPriority = 3;
   bool _isEntryFinished = false;
   bool _isEntryRecommendable = false;
@@ -30,7 +32,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   void initState() {
     WatchlistEntry entry = widget.watchlistEntry;
     _titleController.text = entry.title;
-    // _entryType = entry.category;
+    _selectedCategory = entry.category.target;
     _selectedPriority = entry.priority;
     _isEntryRecommendable = entry.isRecommendable;
 
@@ -89,16 +91,49 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
           
               /// For spacing
               const SizedBox(height: 10.0),
-          
+
               /// Dropdown for type of the show
-              DropdownButton<String>(
-                value: _entryType,
-                isExpanded: true,
-                hint: const Text("Select type of the entry"),
-                onChanged: (String? type) {
-                  setState(() => _entryType = type!);
+              FutureBuilder<List<EntryCategory>>(
+                future:
+                Provider.of<EntryCategoryProvider>(
+                  context,
+                  listen: false,
+                ).categoryList,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  List<EntryCategory> categories = snapshot.data!;
+
+                  // Fix: Find matching object in the new list by ID
+                  EntryCategory? currentValue;
+
+                  try {
+                    currentValue = _selectedCategory == null
+                        ? null
+                        : categories.firstWhere((cat) => cat.id == _selectedCategory!.id);
+                  } catch (e) {
+                    currentValue = null;
+                  }
+
+
+                  return DropdownButton<EntryCategory>(
+                    value: currentValue,
+                    isExpanded: true,
+                    hint: const Text("Select entry category"),
+                    onChanged: (EntryCategory? category) {
+                      setState(() => _selectedCategory = category);
+                    },
+                    items:
+                    categories.map((c) {
+                      return DropdownMenuItem<EntryCategory>(
+                        value: c,
+                        child: Text(c.categoryName),
+                      );
+                    }).toList(),
+                  );
                 },
-                items: _getEntryTypes(),
               ),
           
               /// For spacing
@@ -238,7 +273,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   void _updateWatchlistEntry(WatchlistEntryProvider provider, BuildContext context) {
     WatchlistEntry entry = widget.watchlistEntry;
     entry.title = _titleController.text;
-    // entry.category = _entryType!;
+    entry.category.target = _selectedCategory!;
     entry.priority = _selectedPriority;
     entry.isRecommendable = _isEntryRecommendable;
 
@@ -275,7 +310,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
 
   /// Check the title, entry type, upcoming status and estimated release date
   bool isSubmittable() {
-    if (_titleController.text.isNotEmpty && _entryType != null) {
+    if (_titleController.text.isNotEmpty && _selectedCategory != null) {
       if (_isUpcomingEntry && _estimatedReleaseDateController.text.isEmpty) {
         return false;
       }

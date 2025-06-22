@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/database_services/watchlist_entry_db_service.dart';
+import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 
 class WatchlistEntryProvider extends ChangeNotifier {
@@ -67,6 +68,8 @@ class WatchlistEntryProvider extends ChangeNotifier {
     String searchText = searchTextController.text.toLowerCase();
     _watchList = await db.getUnfinishedEntries();
 
+    _watchList.map((c) => print(c.toString()));
+
     if (searchText.isEmpty) {
       return _watchList;
     }
@@ -75,6 +78,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
         _watchList
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
+
     return filteredWatchList;
   }
 

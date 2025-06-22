@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/providers/entry_category_provider.dart'; // Your other provider
+import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:provider/provider.dart';
 
 class MyNavigationDrawer extends StatelessWidget {
   const MyNavigationDrawer({super.key});

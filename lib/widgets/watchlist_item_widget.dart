@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/widgets/dialogs//watchlist/watchlist_entry_finished_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_detail_dialog.dart';
-import 'package:popcorn/widgets/dialogs//watchlist/watchlist_entry_finished_confirmation_dialog.dart';
 
 class WatchlistItemWidget extends StatefulWidget {
   final WatchlistEntry watchlistEntry;
+
   const WatchlistItemWidget({super.key, required this.watchlistEntry});
 
   @override
@@ -74,7 +76,13 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                               ),
                             ),
                             Text(
-                              '',
+                              widget.watchlistEntry.category.target == null
+                                  ? ""
+                                  : widget
+                                      .watchlistEntry
+                                      .category
+                                      .target!
+                                      .categoryName,
                               style: TextStyle(
                                 color: Colors.black38,
                                 fontSize: 10.0,
@@ -90,7 +98,8 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
 
                     /// Finish/Delete button
                     widget.watchlistEntry.isFinished
-                        ? IconButton( /// Delete Button
+                        ? IconButton(
+                          /// Delete Button
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -106,7 +115,8 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                             size: 28.0,
                           ),
                         )
-                        : IconButton( /// Finish button
+                        : IconButton(
+                          /// Finish button
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -169,4 +179,3 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
     return null;
   }
 }
-

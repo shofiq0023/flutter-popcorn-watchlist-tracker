@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -12,13 +14,15 @@ class WatchlistEntryCreateDialog extends StatefulWidget {
       _WatchlistEntryCreateDialogState();
 }
 
-class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog> {
+class _WatchlistEntryCreateDialogState
+    extends State<WatchlistEntryCreateDialog> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _estimatedReleaseDateController = TextEditingController();
+  final TextEditingController _estimatedReleaseDateController =
+      TextEditingController();
 
   bool _titleError = false;
   bool _isUpcomingEntry = false;
-  String? _entryType;
+  EntryCategory? _selectedCategory;
   int _selectedPriority = 3;
 
   @override
@@ -65,14 +69,47 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
             const SizedBox(height: 10.0),
 
             /// Dropdown for type of the show
-            DropdownButton<String>(
-              value: _entryType,
-              isExpanded: true,
-              hint: const Text("Select type of the entry"),
-              onChanged: (String? type) {
-                setState(() => _entryType = type!);
+            FutureBuilder<List<EntryCategory>>(
+              future:
+                  Provider.of<EntryCategoryProvider>(
+                    context,
+                    listen: false,
+                  ).categoryList,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+
+                List<EntryCategory> categories = snapshot.data!;
+
+                // Fix: Find matching object in the new list by ID
+                EntryCategory? currentValue;
+
+                try {
+                  currentValue = _selectedCategory == null
+                      ? null
+                      : categories.firstWhere((cat) => cat.id == _selectedCategory!.id);
+                } catch (e) {
+                  currentValue = null;
+                }
+
+
+                return DropdownButton<EntryCategory>(
+                  value: currentValue,
+                  isExpanded: true,
+                  hint: const Text("Select entry category"),
+                  onChanged: (EntryCategory? category) {
+                    setState(() => _selectedCategory = category);
+                  },
+                  items:
+                      categories.map((c) {
+                        return DropdownMenuItem<EntryCategory>(
+                          value: c,
+                          child: Text(c.categoryName),
+                        );
+                      }).toList(),
+                );
               },
-              items: _getEntryTypes(),
             ),
 
             /// For spacing
@@ -161,7 +198,7 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
   ) {
     WatchlistEntry entry = WatchlistEntry();
     entry.title = _titleController.text;
-    // entry.category = _entryType!;
+    entry.category.target = _selectedCategory!;
     entry.priority = _selectedPriority;
     entry.isUpcoming = _isUpcomingEntry;
     entry.estimatedReleaseDate =
@@ -173,12 +210,15 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
     Navigator.pop(context);
   }
 
-  // TODO: Get the list from the database
-  List<DropdownMenuItem<String>> _getEntryTypes() {
-    List<String> showType = ["Movie", "Anime", "Series", "Sitcom"];
+  List<DropdownMenuItem<EntryCategory>> _getEntryTypes() {
+    List<EntryCategory> categories =
+        Provider.of<EntryCategoryProvider>(
+          context,
+          listen: false,
+        ).getEntryCategories();
 
-    return showType
-        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+    return categories
+        .map((c) => DropdownMenuItem(value: c, child: Text(c.categoryName)))
         .toList();
   }
 
@@ -199,7 +239,7 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
 
   /// Check the title, entry type, upcoming status and estimated release date
   bool isSubmittable() {
-    if (_titleController.text.isNotEmpty && _entryType != null) {
+    if (_titleController.text.isNotEmpty && _selectedCategory != null) {
       if (_isUpcomingEntry && _estimatedReleaseDateController.text.isEmpty) {
         return false;
       }
@@ -209,5 +249,4 @@ class _WatchlistEntryCreateDialogState extends State<WatchlistEntryCreateDialog>
       return false;
     }
   }
-
 }
