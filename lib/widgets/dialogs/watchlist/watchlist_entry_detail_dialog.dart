@@ -284,15 +284,6 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     Navigator.pop(context);
   }
 
-  // TODO: Get the list from the database
-  List<DropdownMenuItem<String>> _getEntryTypes() {
-    List<String> showType = ["Movie", "Anime", "Series", "Sitcom"];
-
-    return showType
-        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-        .toList();
-  }
-
   /// Show date picker popup
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(

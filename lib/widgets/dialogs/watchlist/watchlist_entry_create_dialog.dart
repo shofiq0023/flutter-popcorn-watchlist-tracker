@@ -210,18 +210,6 @@ class _WatchlistEntryCreateDialogState
     Navigator.pop(context);
   }
 
-  List<DropdownMenuItem<EntryCategory>> _getEntryTypes() {
-    List<EntryCategory> categories =
-        Provider.of<EntryCategoryProvider>(
-          context,
-          listen: false,
-        ).getEntryCategories();
-
-    return categories
-        .map((c) => DropdownMenuItem(value: c, child: Text(c.categoryName)))
-        .toList();
-  }
-
   /// Show date picker popup
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(

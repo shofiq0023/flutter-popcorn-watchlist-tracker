@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/database_services/watchlist_entry_db_service.dart';
-import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 
 class WatchlistEntryProvider extends ChangeNotifier {
