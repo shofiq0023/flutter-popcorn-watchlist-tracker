@@ -61,7 +61,7 @@ class MyNavigationDrawer extends StatelessWidget {
                         context: context,
                         icon: Icons.category_outlined,
                         title: 'Categories',
-                        badgeCount: 0, // example for category count
+                        badgeCount: categoryProvider.getCategoriesCount(), // example for category count
                         badgeColor: Colors.red.shade200,
                         selected: currentRoute == '/entry-category',
                         routeTo: '/entry-category',

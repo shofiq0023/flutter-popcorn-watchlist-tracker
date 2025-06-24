@@ -91,4 +91,8 @@ class EntryCategoryProvider extends ChangeNotifier {
   List<EntryCategory> getEntryCategories() {
     return _entryCategoryList;
   }
+
+  int getCategoriesCount() {
+    return _entryCategoryList.length;
+  }
 }
