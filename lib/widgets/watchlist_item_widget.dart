@@ -44,13 +44,9 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
               /// Priority tag
               Container(
                 width: 4.0,
-                // color: GlobalData.getPriorityColorForCard(
-                //   widget.watchListModel.priority,
-                // ),
                 color: getPriorityBasedColor(),
               ),
 
-              /// Padding between priority tag and titles
               const SizedBox(width: 12.0),
 
               /// Title and finish/delete button
@@ -135,7 +131,6 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                 ),
               ),
 
-              /// Ending padding
               const SizedBox(width: 20.0),
             ],
           ),
@@ -166,14 +161,14 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
   }
 
   Border? getBorderStyleBasedOnUpcomingStatus() {
-    WatchlistEntry entry = widget.watchlistEntry;
-
-    if (entry.isUpcoming) {
-      return Border.all(
-        color: Colors.black38, // Border color
-        width: 2.0, // Border width
-      );
-    }
+    // WatchlistEntry entry = widget.watchlistEntry;
+    //
+    // if (entry.isUpcoming) {
+    //   return Border.all(
+    //     color: Colors.black38, // Border color
+    //     width: 2.0, // Border width
+    //   );
+    // }
 
     return null;
   }

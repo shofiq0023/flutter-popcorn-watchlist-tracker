@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/widgets/dialogs/entry_category/entry_category_delete_confirmation_dialog.dart';
+import 'package:popcorn/widgets/dialogs/entry_category/entry_category_detail_dialog.dart';
 
 class EntryCategoryItemWidget extends StatefulWidget {
   final EntryCategory entryCategory;
@@ -16,7 +17,9 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        showUpdateDialog();
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
@@ -50,6 +53,15 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  void showUpdateDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) =>
+              EntryCategoryDetailDialog(entryCategory: widget.entryCategory),
     );
   }
 }

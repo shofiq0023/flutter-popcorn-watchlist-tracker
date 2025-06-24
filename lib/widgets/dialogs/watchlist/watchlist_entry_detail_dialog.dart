@@ -117,7 +117,6 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                     currentValue = null;
                   }
 
-
                   return DropdownButton<EntryCategory>(
                     value: currentValue,
                     isExpanded: true,
