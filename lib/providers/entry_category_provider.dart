@@ -13,6 +13,7 @@ class EntryCategoryProvider extends ChangeNotifier {
 
   EntryCategoryProvider() {
     db = EntryCategoryDatabaseService();
+    _loadCategoryList();
   }
 
   /// Build dynamic AppTitle bar
@@ -58,6 +59,11 @@ class EntryCategoryProvider extends ChangeNotifier {
     if (!_isSearching) {
       setSearchText("");
     }
+    notifyListeners();
+  }
+
+  Future<void> _loadCategoryList() async {
+    _entryCategoryList = await db.getAll();
     notifyListeners();
   }
 
