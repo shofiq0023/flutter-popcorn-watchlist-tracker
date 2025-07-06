@@ -1,20 +1,58 @@
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:popcorn/database_services/database_helper.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/objectbox.g.dart';
 
 class WatchlistEntryDatabaseService {
-  static late Isar db;
+  static late Box<WatchlistEntry> box;
 
-  static Future<Isar> initializeDatabase() async {
-    if (Isar.instanceNames.isEmpty) {
-      final dir = await getApplicationDocumentsDirectory();
-      db = await Isar.open(
-        [WatchListEntrySchema],
-        inspector: true,
-        directory: dir.path,
-      );
-    }
+  WatchlistEntryDatabaseService() {
+    box = DatabaseHelper.store.box<WatchlistEntry>();
+  }
 
-    return Future.value(Isar.getInstance());
+  // Get unfinished entries (sorted by priority)
+  Future<List<WatchlistEntry>> getUnfinishedEntries() async {
+    Query<WatchlistEntry> query = box.query(WatchlistEntry_.isFinished.equals(false))
+        .order(WatchlistEntry_.priority)
+        .build();
+    return query.find();
+  }
+
+  // Get finished entries (sorted by priority)
+  Future<List<WatchlistEntry>> getFinishedEntries() async {
+    Query<WatchlistEntry> query = box.query(WatchlistEntry_.isFinished.equals(true))
+        .order(WatchlistEntry_.priority)
+        .build();
+    return query.find();
+  }
+
+  Future<List<WatchlistEntry>> getAll() async {
+    Query<WatchlistEntry> query = box.query().order(WatchlistEntry_.priority)
+        .build();
+    return query.find();
+  }
+
+  // Add new entry
+  Future<void> add(WatchlistEntry entity) async {
+    entity.createdAt = DateTime.now();
+    box.put(entity);
+  }
+
+  // Update entry
+  Future<void> update(WatchlistEntry entity) async {
+    entity.updatedAt = DateTime.now();
+    box.put(entity);
+  }
+
+  // Mark as finished
+  Future<void> finished(WatchlistEntry entity) async {
+    entity.updatedAt = DateTime.now();
+    entity.isFinished = true;
+    entity.finishedAt = DateTime.now();
+    box.put(entity);
+  }
+
+  // Delete entry
+  Future<void> delete(int entityId) async {
+    box.remove(entityId);
   }
 }

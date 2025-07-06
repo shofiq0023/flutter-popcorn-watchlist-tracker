@@ -8,7 +8,6 @@ plugins {
 android {
     namespace = "com.watchlist.popcorn"
     compileSdk = flutter.compileSdkVersion
-//    ndkVersion = flutter.ndkVersion
     ndkVersion = "28.0.13004108"
 
     compileOptions {
