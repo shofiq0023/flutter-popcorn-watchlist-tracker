@@ -12,4 +12,14 @@ class EntryCategory {
 
   @Backlink('category')
   final watchlistEntries = ToMany<WatchlistEntry>();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'categoryName': categoryName,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'watchlistEntriesCount': watchlistEntries.length,
+    };
+  }
 }

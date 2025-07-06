@@ -25,6 +25,12 @@ class WatchlistEntryDatabaseService {
     return query.find();
   }
 
+  Future<List<WatchlistEntry>> getAll() async {
+    Query<WatchlistEntry> query = box.query().order(WatchlistEntry_.priority)
+        .build();
+    return query.find();
+  }
+
   // Add new entry
   Future<void> add(WatchlistEntry entity) async {
     entity.createdAt = DateTime.now();

@@ -18,4 +18,20 @@ class WatchlistEntry {
   DateTime? updatedAt;
   DateTime? finishedAt;
   DateTime? estimatedReleaseDate;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'category': category.target?.toJson(),
+      'priority': priority,
+      'isFinished': isFinished,
+      'isRecommendable': isRecommendable,
+      'isUpcoming': isUpcoming,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'finishedAt': finishedAt?.toIso8601String(),
+      'estimatedReleaseDate': estimatedReleaseDate?.toIso8601String(),
+    };
+  }
 }

@@ -98,9 +98,33 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "3:172617035534684282",
+      "lastPropertyId": "4:2537782623749938361",
+      "name": "ImportExportEntity",
+      "properties": [
+        {
+          "id": "1:3287475705244907754",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "3:1801984459014236342",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "4:2537782623749938361",
+          "name": "title",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "2:2814220138610795272",
+  "lastEntityId": "3:172617035534684282",
   "lastIndexId": "1:290440548427237458",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
@@ -109,7 +133,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
-    8794483957213056548
+    8794483957213056548,
+    4297417514854607230
   ],
   "retiredRelationUids": [],
   "version": 1

@@ -5,6 +5,7 @@ import 'package:popcorn/pages/import_export_page.dart';
 import 'package:popcorn/pages/settings_page.dart';
 import 'package:popcorn/pages/watchlist_home_page.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/providers/import_export_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => WatchlistEntryProvider()),
         ChangeNotifierProvider(create: (_) => EntryCategoryProvider()),
+        ChangeNotifierProvider(create: (_) => ImportExportProvider()),
       ],
       child: const MyApp(),
     ),
