@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/providers/import_export_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -21,11 +22,31 @@ class _ImportExportPageState extends State<ImportExportPage> {
       body: Consumer<ImportExportProvider>(
         builder: (context, provider, child) {
           return Center(
-            child: ElevatedButton(
-              onPressed: () {
-                provider.exportTableToJson();
-              },
-              child: const Text("Create Backup"),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    if(await provider.exportTableToJson()) {
+                      ToastHelper.showSuccessToast("Successfully created backup at Downloads folder");
+                    } else {
+                      ToastHelper.showSuccessToast("Could not create backup");
+                    }
+                  },
+                  child: const Text("Create Backup"),
+                ),
+
+                ElevatedButton(
+                  onPressed: () async {
+                    if(await provider.pickAndReadJsonFile()) {
+                      ToastHelper.showSuccessToast("Backup restored successfully");
+                    } else {
+                      ToastHelper.showSuccessToast("Could not restore backup");
+                    }
+                  },
+                  child: const Text("Restore Backup"),
+                ),
+              ],
             ),
           );
         },

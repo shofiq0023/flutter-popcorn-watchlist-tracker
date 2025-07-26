@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -92,6 +93,40 @@ class ImportExportProvider extends ChangeNotifier {
     }
   }
 
+  String fileName = "";
+
   // Import data
-  // TODO: Create a method to import json files for data restore
+  Future<bool> pickAndReadJsonFile() async {
+    try {
+      // Pick a JSON file
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        // Get the file
+        File file = File(result.files.single.path!);
+        fileName = result.files.single.name;
+
+        // Read the file content
+        String fileContent = await file.readAsString();
+
+        // Parse JSON
+        Map<String, dynamic> parsedJson = json.decode(fileContent);
+
+        print('JSON file loaded successfully');
+        print('File name: $fileName');
+        print('Content: $parsedJson');
+        return true;
+      } else {
+        print('No file selected');
+        return false;
+      }
+    } catch (e) {
+      print('Error reading JSON file: $e');
+      return false;
+    }
+  }
 }
