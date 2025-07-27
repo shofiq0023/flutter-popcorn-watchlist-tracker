@@ -36,11 +36,11 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     _selectedCategory = entry.category.target;
     _selectedPriority = entry.priority;
     _isEntryRecommendable = entry.isRecommendable;
+    _isEntryFinished = entry.isFinished;
 
     _isUpcomingEntry = entry.isUpcoming;
     _estimatedReleaseDateController.text = Utils.dateTimeToStrDate(entry.estimatedReleaseDate);
 
-    _isEntryFinished = entry.isFinished;
     _entryFinishedDateController.text = Utils.dateTimeToStrDate(entry.finishedAt);
 
     _entryCreationDateController.text = Utils.dateTimeToStrDateWithTime(entry.createdAt);
@@ -148,6 +148,19 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                   setState(() => _selectedPriority = priority!);
                 },
                 items: Utils.getPriorityDropdown(),
+              ),
+
+              /// isFinished entry checkbox
+              CheckboxListTile(
+                title: Text("Finished"),
+                value: _isEntryFinished,
+                onChanged: (bool? newValue) {
+                  setState(() {
+                    _isEntryFinished = newValue!;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
               ),
           
               /// Recommendable entry checkbox
@@ -291,6 +304,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     entry.title = _titleController.text;
     entry.category.target = _selectedCategory!;
     entry.priority = _selectedPriority;
+    entry.isFinished = _isEntryFinished;
     entry.isRecommendable = _isEntryRecommendable;
 
     entry.isUpcoming = _isUpcomingEntry;
