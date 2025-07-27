@@ -55,4 +55,16 @@ class WatchlistEntryDatabaseService {
   Future<void> delete(int entityId) async {
     box.remove(entityId);
   }
+
+  // Delete all entries
+  Future<void> deleteAll() async {
+    box.removeAll();
+  }
+
+  void clearAndInsert(List<WatchlistEntry> entries) async {
+    await deleteAll();
+    for (WatchlistEntry entry in entries) {
+      add(entry);
+    }
+  }
 }
