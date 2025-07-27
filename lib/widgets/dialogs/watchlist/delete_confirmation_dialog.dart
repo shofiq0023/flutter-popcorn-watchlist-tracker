@@ -40,7 +40,7 @@ class _DeleteConfirmationDialogState extends State<DeleteConfirmationDialog> {
                   context,
                   listen: false,
                 ).delete(widget.watchlistEntry);
-                Navigator.pop(context);
+                Navigator.of(context).popUntil((route) => route is PageRoute);
               },
             ),
           ],

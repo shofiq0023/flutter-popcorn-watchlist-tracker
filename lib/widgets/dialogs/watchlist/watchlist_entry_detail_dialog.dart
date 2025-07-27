@@ -4,6 +4,7 @@ import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/utils/utils.dart';
+import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistEntryDetailDialog extends StatefulWidget {
@@ -245,7 +246,23 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
               },
             ),
 
-            /// Create button
+            /// Update button
+            Consumer<WatchlistEntryProvider>(
+              builder: (context, provider, child) {
+                return MaterialButton(
+                  onPressed:
+                  isSubmittable()
+                      ? () => _deleteWatchlistEntry(provider, context)
+                      : null,
+                  child: Text(
+                    "DELETE",
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                );
+              },
+            ),
             Consumer<WatchlistEntryProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
@@ -281,6 +298,16 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
 
     provider.update(entry);
     Navigator.pop(context);
+  }
+
+  /// Delete the current entry
+  void _deleteWatchlistEntry(WatchlistEntryProvider provider, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => DeleteConfirmationDialog(
+        watchlistEntry: widget.watchlistEntry,
+      ),
+    );
   }
 
   /// Show date picker popup
