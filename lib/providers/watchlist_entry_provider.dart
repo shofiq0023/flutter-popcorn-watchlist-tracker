@@ -7,16 +7,28 @@ class WatchlistEntryProvider extends ChangeNotifier {
   final searchToggleTitle = "Search...";
   final searchTextController = TextEditingController();
 
+  int _pageIndex = 0;
   late WatchlistEntryDatabaseService db;
   bool _isSearching = false;
   bool _isSelectionMode = false;
 
-  List<WatchlistEntry> _watchList = [];
+  List<WatchlistEntry> _allWatchList = [];
+  List<WatchlistEntry> _unfinishedWatchList = [];
   List<WatchlistEntry> _finishedWatchList = [];
   Map<int, int> selectedEntries = {};
 
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
+    loadAllEntry();
+  }
+
+  void setPageIndex(int index) {
+    _pageIndex = index;
+    notifyListeners();
+  }
+
+  int get pageIndex {
+    return _pageIndex;
   }
 
   /// Build dynamic AppTitle bar
@@ -65,18 +77,24 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<WatchlistEntry>> get watchList async {
-    String searchText = searchTextController.text.toLowerCase();
-    _watchList = await db.getUnfinishedEntries();
+  Future<void> loadAllEntry() async {
+    _allWatchList = await db.getAll();
+    _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
+    _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
+    notifyListeners();
+  }
 
-    _watchList.map((c) => print(c.toString()));
+  Future<List<WatchlistEntry>> get watchList async {
+    loadAllEntry();
+    String searchText = searchTextController.text.toLowerCase();
+    // _unfinishedWatchList = await db.getUnfinishedEntries();
 
     if (searchText.isEmpty) {
-      return _watchList;
+      return _unfinishedWatchList;
     }
 
     List<WatchlistEntry> filteredWatchList =
-        _watchList
+        _unfinishedWatchList
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
 
@@ -84,8 +102,9 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
   Future<List<WatchlistEntry>> get finishedWatchList async {
+    loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
-    _finishedWatchList = await db.getFinishedEntries();
+    // _finishedWatchList = await db.getFinishedEntries();
 
     if (searchText.isEmpty) {
       return _finishedWatchList;
@@ -119,7 +138,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
   int entryCount() {
-    return _watchList.length;
+    return _unfinishedWatchList.length;
   }
 
   bool get isSelectionMode => _isSelectionMode;
@@ -144,11 +163,63 @@ class WatchlistEntryProvider extends ChangeNotifier {
   void removeFromSelectedEntry(WatchlistEntry entry) {
     int entryId = entry.id;
     selectedEntries.remove(entryId);
+
+    if (selectedEntries.isEmpty) {
+      disableSelectionMode();
+    }
     notifyListeners();
   }
 
   bool isSelectedEntry(WatchlistEntry entry) {
     int entryId = entry.id;
     return selectedEntries.containsKey(entryId);
+  }
+
+  void finishSelectedEntries({recommendable = false}) {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isRecommendable = recommendable;
+      finished(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  void removeFinishStatusFromSelectedEntries() {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isFinished = false;
+      update(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  void removeFinishAndRecommendStatusFromSelectedEntries({recommendable = false}) {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isFinished = false;
+      entry.isRecommendable = recommendable;
+      update(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  WatchlistEntry _getEntryById(int id) {
+    return _allWatchList.firstWhere((e) => e.id == id);
+  }
+
+  void deleteSelectedEntries() {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      delete(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
   }
 }

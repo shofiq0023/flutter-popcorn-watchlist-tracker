@@ -5,6 +5,7 @@ import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/custom_bottom_navigation_bar.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_create_dialog.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
+import 'package:popcorn/widgets/selection_mode_action_bot_nav.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistHomePage extends StatefulWidget {
@@ -15,8 +16,6 @@ class WatchlistHomePage extends StatefulWidget {
 }
 
 class _WatchlistHomePageState extends State<WatchlistHomePage> {
-  int pageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Consumer<WatchlistEntryProvider>(
@@ -35,24 +34,29 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
           drawer: const MyNavigationDrawer(),
           drawerEnableOpenDragGesture: true,
           drawerEdgeDragWidth: 600,
-          bottomNavigationBar: CustomBottomNavigationBar(
-            onIndexSelected: (index) {
-              setState(() {
-                pageIndex = index;
-              });
-            },
-          ),
+          bottomNavigationBar:
+              provider.isSelectionMode
+                  ? SelectionModeActionBottomNav()
+                  : CustomBottomNavigationBar(
+                    selectedIndex: provider.pageIndex,
+                    onIndexSelected: (index) {
+                      provider.setPageIndex(index);
+                    },
+                  ),
           body:
               [
                 const EntriesFinishedWindow(),
                 const EntriesUnfinishedWindow(),
-              ][pageIndex],
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              showEntryCreationDialog();
-            },
-            child: const Icon(Icons.add, size: 32.0),
-          ),
+              ][provider.pageIndex],
+          floatingActionButton:
+              provider.isSelectionMode
+                  ? null
+                  : FloatingActionButton(
+                    onPressed: () {
+                      showEntryCreationDialog();
+                    },
+                    child: const Icon(Icons.add, size: 32.0),
+                  ),
         );
       },
     );
