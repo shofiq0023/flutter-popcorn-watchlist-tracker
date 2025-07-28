@@ -37,7 +37,11 @@ class _EntriesFinishedWindowState extends State<EntriesFinishedWindow> {
               ),
               itemCount: entries.length,
               itemBuilder: (context, index) {
-                return WatchlistItemWidget(watchlistEntry: entries[index]);
+                return WatchlistItemWidget(
+                  watchlistEntry: entries[index],
+                  isSelected: provider.isSelectedEntry(entries[index]),
+                  isInSelectionMode: provider.isSelectionMode,
+                );
               },
             );
           },

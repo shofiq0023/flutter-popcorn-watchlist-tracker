@@ -263,10 +263,9 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
             Consumer<WatchlistEntryProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
-                  onPressed:
-                  isSubmittable()
-                      ? () => _deleteWatchlistEntry(provider, context)
-                      : null,
+                  onPressed: () {
+                    _deleteWatchlistEntry(provider, context);
+                  },
                   child: Text(
                     "DELETE",
                     style: TextStyle(

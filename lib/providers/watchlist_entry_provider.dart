@@ -9,9 +9,11 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
   late WatchlistEntryDatabaseService db;
   bool _isSearching = false;
+  bool _isSelectionMode = false;
 
   List<WatchlistEntry> _watchList = [];
   List<WatchlistEntry> _finishedWatchList = [];
+  Map<int, int> selectedEntries = {};
 
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
@@ -118,5 +120,35 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
   int entryCount() {
     return _watchList.length;
+  }
+
+  bool get isSelectionMode => _isSelectionMode;
+
+  void enableSelectionMode() {
+    _isSelectionMode = true;
+    notifyListeners();
+  }
+
+  void disableSelectionMode() {
+    selectedEntries.clear();
+    _isSelectionMode = false;
+    notifyListeners();
+  }
+
+  void addToSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    selectedEntries.putIfAbsent(entryId, () => entryId);
+    notifyListeners();
+  }
+
+  void removeFromSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    selectedEntries.remove(entryId);
+    notifyListeners();
+  }
+
+  bool isSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    return selectedEntries.containsKey(entryId);
   }
 }
