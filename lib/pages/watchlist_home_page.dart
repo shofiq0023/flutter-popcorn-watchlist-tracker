@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:popcorn/pages/components/entries_finished_window.dart';
 import 'package:popcorn/pages/components/entries_unfinished_window.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/widgets/custom_bottom_navigation_bar.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_create_dialog.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';

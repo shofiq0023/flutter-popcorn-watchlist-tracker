@@ -29,4 +29,18 @@ class ToastHelper {
       fontSize: 16.0,
     );
   }
+
+  static void showInfoToast(String message) {
+    // Secondary red color option: Color(0xFF3B82F6)
+
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 2,
+      backgroundColor: Color(0xFF0EA5E9),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
 }
