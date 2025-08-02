@@ -123,6 +123,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                             if (widget.isInSelectionMode) {
                               return;
                             }
+
                             showDialog(
                               context: context,
                               builder:

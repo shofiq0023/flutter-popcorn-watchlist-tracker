@@ -104,7 +104,6 @@ class WatchlistEntryProvider extends ChangeNotifier {
   Future<List<WatchlistEntry>> get finishedWatchList async {
     loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
-    // _finishedWatchList = await db.getFinishedEntries();
 
     if (searchText.isEmpty) {
       return _finishedWatchList;

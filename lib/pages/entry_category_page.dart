@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:popcorn/pages/components/entry_category_component.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/widgets/dialogs/entry_category/entry_category_create_dialog.dart';
+import 'package:popcorn/widgets/entry_category_selection_mode_bot_nav.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +31,10 @@ class _EntryCategoryPageState extends State<EntryCategoryPage> {
           drawer: const MyNavigationDrawer(),
           drawerEnableOpenDragGesture: true,
           drawerEdgeDragWidth: 600,
+          bottomNavigationBar:
+              provider.isInSelectionMode
+                  ? EntryCategorySelectionModeBottomNav()
+                  : null,
           body: EntryCategoryComponent(),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
