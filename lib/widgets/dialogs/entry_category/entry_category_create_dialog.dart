@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:provider/provider.dart';
 
 class EntryCategoryCreateDialog extends StatefulWidget {
@@ -74,10 +75,13 @@ class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
             Consumer<EntryCategoryProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
-                  onPressed:
-                  isSubmittable()
-                      ? () => _createEntryCategory(provider, context)
-                      : null,
+                  onPressed: () {
+                    if (isSubmittable()) {
+                      _createEntryCategory(provider, context);
+                    } else {
+                      ToastHelper.showWarningToast("Please enter a name!");
+                    }
+                  },
                   child: Text(
                     "CREATE",
                     style: TextStyle(
@@ -102,6 +106,7 @@ class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
     entry.categoryName = _entryCategoryNameTextController.text;
 
     provider.add(entry);
+    ToastHelper.showSuccessToast("Successfully added a category");
     Navigator.pop(context);
   }
 

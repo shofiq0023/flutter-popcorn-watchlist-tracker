@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:provider/provider.dart';
 
 class DeleteConfirmationDialog extends StatefulWidget {
@@ -40,6 +41,7 @@ class _DeleteConfirmationDialogState extends State<DeleteConfirmationDialog> {
                   context,
                   listen: false,
                 ).delete(widget.watchlistEntry);
+                ToastHelper.showSuccessToast("Successfully deleted entry");
                 Navigator.of(context).popUntil((route) => route is PageRoute);
               },
             ),

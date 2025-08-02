@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistEntryFinishedDialog extends StatefulWidget {
@@ -58,6 +59,7 @@ class _WatchlistEntryFinishedDialogState extends State<WatchlistEntryFinishedDia
                   context,
                   listen: false,
                 ).finished(widget.watchlistEntry);
+                ToastHelper.showInfoToast("Successfully marked as finished");
                 Navigator.pop(context);
               },
             ),

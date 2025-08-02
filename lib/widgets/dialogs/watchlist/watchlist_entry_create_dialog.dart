@@ -3,6 +3,7 @@ import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -172,10 +173,13 @@ class _WatchlistEntryCreateDialogState
             Consumer<WatchlistEntryProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
-                  onPressed:
-                      isSubmittable()
-                          ? () => _createWatchlistEntry(provider, context)
-                          : null,
+                  onPressed: () {
+                    if (isSubmittable()) {
+                      _createWatchlistEntry(provider, context);
+                    } else {
+                      ToastHelper.showWarningToast("Please fill out all fields!");
+                    }
+                  },
                   child: Text(
                     "CREATE",
                     style: TextStyle(
@@ -207,6 +211,7 @@ class _WatchlistEntryCreateDialogState
             : null;
 
     provider.add(entry);
+    ToastHelper.showSuccessToast("Successfully added entry to watchlist");
     Navigator.pop(context);
   }
 

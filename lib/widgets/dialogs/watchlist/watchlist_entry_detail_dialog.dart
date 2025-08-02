@@ -3,6 +3,7 @@ import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
 import 'package:provider/provider.dart';
@@ -310,6 +311,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     entry.estimatedReleaseDate = _isUpcomingEntry ? Utils.strDateToDateTime(_estimatedReleaseDateController.text) : null;
 
     provider.update(entry);
+    ToastHelper.showSuccessToast("Successfully updated entry");
     Navigator.pop(context);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -139,6 +140,7 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
     category.categoryName = _entryCategoryNameTextController.text;
 
     provider.update(category);
+    ToastHelper.showSuccessToast("Successfully updated the category");
     Navigator.pop(context);
   }
 
