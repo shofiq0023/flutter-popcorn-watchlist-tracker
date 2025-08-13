@@ -16,6 +16,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'models/entities/entry_category.dart';
 import 'models/entities/import_export_entity.dart';
+import 'models/entities/user_preferences.dart';
 import 'models/entities/watchlist_entry.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -124,7 +125,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(3, 172617035534684282),
       name: 'ImportExportEntity',
-      lastPropertyId: const obx_int.IdUid(4, 2537782623749938361),
+      lastPropertyId: const obx_int.IdUid(7, 3640833321844266449),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -138,9 +139,38 @@ final _entities = <obx_int.ModelEntity>[
             type: 10,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 2537782623749938361),
+            id: const obx_int.IdUid(7, 3640833321844266449),
             name: 'title',
             type: 9,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(4, 6354495671529249068),
+      name: 'UserPreferencesEntity',
+      lastPropertyId: const obx_int.IdUid(4, 5282230337529832885),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 4526642883012547880),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 3041389287337291185),
+            name: 'username',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 528516054122707266),
+            name: 'createdAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 5282230337529832885),
+            name: 'updatedAt',
+            type: 10,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -182,13 +212,19 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(3, 172617035534684282),
+      lastEntityId: const obx_int.IdUid(4, 6354495671529249068),
       lastIndexId: const obx_int.IdUid(1, 290440548427237458),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [8794483957213056548, 4297417514854607230],
+      retiredPropertyUids: const [
+        8794483957213056548,
+        4297417514854607230,
+        2537782623749938361,
+        7322548860406092907,
+        4131311492092195298
+      ],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -310,10 +346,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (ImportExportEntity object, fb.Builder fbb) {
           final titleOffset = fbb.writeString(object.title);
-          fbb.startTable(5);
+          fbb.startTable(8);
           fbb.addInt64(0, object.id);
           fbb.addInt64(2, object.createdAt.millisecondsSinceEpoch);
-          fbb.addOffset(3, titleOffset);
+          fbb.addOffset(6, titleOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -326,7 +362,42 @@ obx_int.ModelDefinition getObjectBoxModel() {
             ..createdAt = DateTime.fromMillisecondsSinceEpoch(
                 const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0))
             ..title = const fb.StringReader(asciiOptimization: true)
-                .vTableGet(buffer, rootOffset, 10, '');
+                .vTableGet(buffer, rootOffset, 16, '');
+
+          return object;
+        }),
+    UserPreferencesEntity: obx_int.EntityDefinition<UserPreferencesEntity>(
+        model: _entities[3],
+        toOneRelations: (UserPreferencesEntity object) => [],
+        toManyRelations: (UserPreferencesEntity object) => {},
+        getId: (UserPreferencesEntity object) => object.id,
+        setId: (UserPreferencesEntity object, int id) {
+          object.id = id;
+        },
+        objectToFB: (UserPreferencesEntity object, fb.Builder fbb) {
+          final usernameOffset = fbb.writeString(object.username);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, usernameOffset);
+          fbb.addInt64(2, object.createdAt.millisecondsSinceEpoch);
+          fbb.addInt64(3, object.updatedAt?.millisecondsSinceEpoch);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final updatedAtValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final object = UserPreferencesEntity()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..username = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '')
+            ..createdAt = DateTime.fromMillisecondsSinceEpoch(
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0))
+            ..updatedAt = updatedAtValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(updatedAtValue);
 
           return object;
         })
@@ -419,4 +490,23 @@ class ImportExportEntity_ {
   /// See [ImportExportEntity.title].
   static final title =
       obx.QueryStringProperty<ImportExportEntity>(_entities[2].properties[2]);
+}
+
+/// [UserPreferencesEntity] entity fields to define ObjectBox queries.
+class UserPreferencesEntity_ {
+  /// See [UserPreferencesEntity.id].
+  static final id = obx.QueryIntegerProperty<UserPreferencesEntity>(
+      _entities[3].properties[0]);
+
+  /// See [UserPreferencesEntity.username].
+  static final username = obx.QueryStringProperty<UserPreferencesEntity>(
+      _entities[3].properties[1]);
+
+  /// See [UserPreferencesEntity.createdAt].
+  static final createdAt =
+      obx.QueryDateProperty<UserPreferencesEntity>(_entities[3].properties[2]);
+
+  /// See [UserPreferencesEntity.updatedAt].
+  static final updatedAt =
+      obx.QueryDateProperty<UserPreferencesEntity>(_entities[3].properties[3]);
 }

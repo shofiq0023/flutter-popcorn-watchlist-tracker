@@ -1,6 +1,7 @@
 import 'package:path_provider/path_provider.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/import_export_entity.dart';
+import 'package:popcorn/models/entities/user_preferences.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/objectbox.g.dart';
 
@@ -9,6 +10,7 @@ class DatabaseHelper {
   static late Box<EntryCategory> entryCategoryBox;
   static late Box<WatchlistEntry> watchlistEntryBox;
   static late Box<ImportExportEntity> importExportBox;
+  static late Box<UserPreferencesEntity> userPreferencesBox;
 
   /// Initializes a singleton store for objectBox
   static Future<void> initializeDatabase() async {
@@ -17,5 +19,6 @@ class DatabaseHelper {
     entryCategoryBox = store.box<EntryCategory>();
     watchlistEntryBox = store.box<WatchlistEntry>();
     importExportBox = store.box<ImportExportEntity>();
+    userPreferencesBox = store.box<UserPreferencesEntity>();
   }
 }
