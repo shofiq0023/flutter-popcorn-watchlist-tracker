@@ -16,6 +16,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
   List<WatchlistEntry> _unfinishedWatchList = [];
   List<WatchlistEntry> _finishedWatchList = [];
   Map<int, int> selectedEntries = {};
+  String _currentSortType = 'default';
 
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
@@ -84,10 +85,17 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String get currentSortType => _currentSortType;
+
+  /// Get watch list
   Future<List<WatchlistEntry>> get watchList async {
     loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
-    // _unfinishedWatchList = await db.getUnfinishedEntries();
+
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
+    }
 
     if (searchText.isEmpty) {
       return _unfinishedWatchList;
@@ -101,9 +109,15 @@ class WatchlistEntryProvider extends ChangeNotifier {
     return filteredWatchList;
   }
 
+  /// Get finished watch list
   Future<List<WatchlistEntry>> get finishedWatchList async {
     loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
+
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
+    }
 
     if (searchText.isEmpty) {
       return _finishedWatchList;
@@ -219,6 +233,59 @@ class WatchlistEntryProvider extends ChangeNotifier {
     }
 
     disableSelectionMode();
+    notifyListeners();
+  }
+
+  void sortWatchlist(String sortType) {
+    _currentSortType = sortType;
+
+    switch (sortType) {
+      case 'title_asc':
+        _unfinishedWatchList.sort((a, b) =>
+            a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        _finishedWatchList.sort((a, b) =>
+            a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        break;
+
+      case 'title_desc':
+        _unfinishedWatchList.sort((a, b) =>
+            b.title.toLowerCase().compareTo(a.title.toLowerCase()));
+        _finishedWatchList.sort((a, b) =>
+            b.title.toLowerCase().compareTo(a.title.toLowerCase()));
+        break;
+
+      case 'date_asc':
+        _unfinishedWatchList.sort((a, b) =>
+            a.createdAt.compareTo(b.createdAt));
+        _finishedWatchList.sort((a, b) =>
+            a.createdAt.compareTo(b.createdAt));
+        break;
+
+      case 'date_desc':
+        _unfinishedWatchList.sort((a, b) =>
+            b.createdAt.compareTo(a.createdAt));
+        _finishedWatchList.sort((a, b) =>
+            b.createdAt.compareTo(a.createdAt));
+        break;
+
+      case 'priority_desc':
+        _unfinishedWatchList.sort((a, b) =>
+            b.priority.compareTo(a.priority));
+        _finishedWatchList.sort((a, b) =>
+            b.priority.compareTo(a.priority));
+        break;
+
+      case 'default':
+        _unfinishedWatchList.sort((a, b) =>
+            a.priority.compareTo(b.priority));
+        _finishedWatchList.sort((a, b) =>
+            a.priority.compareTo(b.priority));
+        break;
+
+      default:
+        break;
+    }
+
     notifyListeners();
   }
 }

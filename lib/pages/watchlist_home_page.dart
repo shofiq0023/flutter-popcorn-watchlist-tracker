@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/pages/components/custom_bottom_sheet.dart';
 import 'package:popcorn/pages/components/entries_finished_window.dart';
 import 'package:popcorn/pages/components/entries_unfinished_window.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
@@ -28,7 +29,34 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
                 onPressed: provider.toggleSearch,
                 icon: const Icon(Icons.search),
               ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.sort)),
+              IconButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => CustomBottomSheet(),
+                  );
+                },
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const Icon(Icons.sort),
+
+                    // Show the dot only if sorting is active
+                    if (provider.currentSortType != "default") // default
+                      Positioned(
+                        right: -1,
+                        top: -1,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: Colors.red, // dot color
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              )
             ],
           ),
           drawer: const MyNavigationDrawer(),
