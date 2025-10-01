@@ -18,6 +18,8 @@ class WatchlistEntryProvider extends ChangeNotifier {
   Map<int, int> selectedEntries = {};
   String _currentSortType = 'default';
 
+  Set<String> _selectedFilterOptions = {};
+
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
     loadAllEntry();
@@ -106,6 +108,8 @@ class WatchlistEntryProvider extends ChangeNotifier {
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
 
+    filteredWatchList = filterWatchList(filteredWatchList);
+
     return filteredWatchList;
   }
 
@@ -127,7 +131,48 @@ class WatchlistEntryProvider extends ChangeNotifier {
         _finishedWatchList
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
+
+    print(">>>>>>>>>>>>>>>>>>>> WHATS UP");
+
+    filteredWatchList = filterWatchList(filteredWatchList);
+
     return filteredWatchList;
+  }
+
+  List<WatchlistEntry> filterWatchList(List<WatchlistEntry> watchList) {
+    List<WatchlistEntry> filteredWatchList = watchList;
+
+    if (_selectedFilterOptions.isNotEmpty) {
+      if (_selectedFilterOptions.contains("Recommended")) {
+        filteredWatchList =
+            watchList.where((w) => w.isRecommendable == true).toList();
+      }
+
+      filteredWatchList =
+          watchList
+              .where(
+                (w) => _selectedFilterOptions.contains(
+              w.category.target!.categoryName,
+            ),
+          ).toList();
+    }
+
+    print(">>>>>>>>>>>>>>>>>>>>>>>> Filtered list");
+    return filteredWatchList;
+  }
+
+  void addToFilterOption(String filterOption) {
+    _selectedFilterOptions.add(filterOption);
+    notifyListeners();
+  }
+
+  void removeFromFilterOption(String filterOption) {
+    _selectedFilterOptions.remove(filterOption);
+    notifyListeners();
+  }
+
+  bool selectedFilterOptionsContains(String item) {
+    return _selectedFilterOptions.contains(item);
   }
 
   Future<void> add(WatchlistEntry entity) async {
@@ -210,7 +255,9 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFinishAndRecommendStatusFromSelectedEntries({recommendable = false}) {
+  void removeFinishAndRecommendStatusFromSelectedEntries({
+    recommendable = false,
+  }) {
     for (int entryId in selectedEntries.keys) {
       WatchlistEntry entry = _getEntryById(entryId);
       entry.isFinished = false;
@@ -241,45 +288,41 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
     switch (sortType) {
       case 'title_asc':
-        _unfinishedWatchList.sort((a, b) =>
-            a.title.toLowerCase().compareTo(b.title.toLowerCase()));
-        _finishedWatchList.sort((a, b) =>
-            a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        _unfinishedWatchList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+        _finishedWatchList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
         break;
 
       case 'title_desc':
-        _unfinishedWatchList.sort((a, b) =>
-            b.title.toLowerCase().compareTo(a.title.toLowerCase()));
-        _finishedWatchList.sort((a, b) =>
-            b.title.toLowerCase().compareTo(a.title.toLowerCase()));
+        _unfinishedWatchList.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        _finishedWatchList.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
         break;
 
       case 'date_asc':
-        _unfinishedWatchList.sort((a, b) =>
-            a.createdAt.compareTo(b.createdAt));
-        _finishedWatchList.sort((a, b) =>
-            a.createdAt.compareTo(b.createdAt));
+        _unfinishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        _finishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
         break;
 
       case 'date_desc':
-        _unfinishedWatchList.sort((a, b) =>
-            b.createdAt.compareTo(a.createdAt));
-        _finishedWatchList.sort((a, b) =>
-            b.createdAt.compareTo(a.createdAt));
+        _unfinishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        _finishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         break;
 
       case 'priority_desc':
-        _unfinishedWatchList.sort((a, b) =>
-            b.priority.compareTo(a.priority));
-        _finishedWatchList.sort((a, b) =>
-            b.priority.compareTo(a.priority));
+        _unfinishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
+        _finishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
         break;
 
       case 'default':
-        _unfinishedWatchList.sort((a, b) =>
-            a.priority.compareTo(b.priority));
-        _finishedWatchList.sort((a, b) =>
-            a.priority.compareTo(b.priority));
+        _unfinishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
+        _finishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
         break;
 
       default:

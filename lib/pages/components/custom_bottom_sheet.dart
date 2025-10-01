@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -135,31 +136,29 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
   }
 
   Widget _buildMultiSelectTab() {
-    return ListView.builder(
-      padding: EdgeInsets.all(16),
-      itemCount: multiSelectItems.length,
-      itemBuilder: (context, index) {
-        final item = multiSelectItems[index];
-        final isSelected = selectedItems.contains(item);
+    return Consumer2<WatchlistEntryProvider, EntryCategoryProvider>(
+      builder: (context, watchlistProvider, entryCategoryProvider, child) {
+        return ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: entryCategoryProvider.filterOptions.length,
+          itemBuilder: (context, index) {
+            final item = entryCategoryProvider.filterOptions[index];
+            final isSelected = watchlistProvider.selectedFilterOptionsContains(item);
 
-        return Card(
-          child: CheckboxListTile(
-            title: Text(item),
-            value: isSelected,
-            onChanged: (bool? value) {
-              setState(() {
-                if (value == true) {
-                  selectedItems.add(item);
-                  print('Selected: $item');
-                  print('Currently selected items: $selectedItems');
-                } else {
-                  selectedItems.remove(item);
-                  print('Deselected: $item');
-                  print('Currently selected items: $selectedItems');
-                }
-              });
-            },
-          ),
+            return Card(
+              child: CheckboxListTile(
+                title: Text(item),
+                value: isSelected,
+                onChanged: (bool? value) {
+                  if (value == true) {
+                    watchlistProvider.addToFilterOption(item);
+                  } else {
+                    watchlistProvider.removeFromFilterOption(item);
+                  }
+                },
+              ),
+            );
+          },
         );
       },
     );

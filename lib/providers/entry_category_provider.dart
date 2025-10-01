@@ -13,6 +13,8 @@ class EntryCategoryProvider extends ChangeNotifier {
   List<EntryCategory> _entryCategoryList = [];
   Map<int, int> selectedEntries = {};
 
+  final List<String> _filterOptions = ['Recommended'];
+
   EntryCategoryProvider() {
     db = EntryCategoryDatabaseService();
     loadCategoryList();
@@ -66,6 +68,11 @@ class EntryCategoryProvider extends ChangeNotifier {
 
   Future<void> loadCategoryList() async {
     _entryCategoryList = await db.getAll();
+
+    for (final category in _entryCategoryList) {
+      _filterOptions.add(category.categoryName);
+    }
+
     notifyListeners();
   }
 
@@ -103,6 +110,8 @@ class EntryCategoryProvider extends ChangeNotifier {
   int getCategoriesCount() {
     return _entryCategoryList.length;
   }
+
+  List<String> get filterOptions => _filterOptions;
 
   bool get isInSelectionMode => _isInSelectionMode;
 
