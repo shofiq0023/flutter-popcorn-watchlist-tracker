@@ -7,13 +7,17 @@ class EntryCategoryProvider extends ChangeNotifier {
   final searchToggleTitle = "Search...";
   final searchTextController = TextEditingController();
   bool _isSearching = false;
+  bool _isInSelectionMode = false;
   late EntryCategoryDatabaseService db;
 
   List<EntryCategory> _entryCategoryList = [];
+  Map<int, int> selectedEntries = {};
+
+  final List<String> _filterOptions = ['Recommended', 'Upcoming'];
 
   EntryCategoryProvider() {
     db = EntryCategoryDatabaseService();
-    _loadCategoryList();
+    loadCategoryList();
   }
 
   /// Build dynamic AppTitle bar
@@ -62,8 +66,13 @@ class EntryCategoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadCategoryList() async {
+  Future<void> loadCategoryList() async {
     _entryCategoryList = await db.getAll();
+
+    for (final category in _entryCategoryList) {
+      _filterOptions.add(category.categoryName);
+    }
+
     notifyListeners();
   }
 
@@ -100,5 +109,55 @@ class EntryCategoryProvider extends ChangeNotifier {
 
   int getCategoriesCount() {
     return _entryCategoryList.length;
+  }
+
+  List<String> get filterOptions => _filterOptions;
+
+  bool get isInSelectionMode => _isInSelectionMode;
+
+  void enableSelectionMode() {
+    _isInSelectionMode = true;
+    notifyListeners();
+  }
+
+  void disableSelectionMode() {
+    selectedEntries.clear();
+    _isInSelectionMode = false;
+    notifyListeners();
+  }
+
+  void addToSelectedEntryCategory(EntryCategory entry) {
+    int entryId = entry.id;
+    selectedEntries.putIfAbsent(entryId, () => entryId);
+    notifyListeners();
+  }
+
+  void removeFromSelectedEntryCategory(EntryCategory entry) {
+    int entryId = entry.id;
+    selectedEntries.remove(entryId);
+
+    if (selectedEntries.isEmpty) {
+      disableSelectionMode();
+    }
+    notifyListeners();
+  }
+
+  bool isSelectedEntryCategory(EntryCategory entry) {
+    int entryId = entry.id;
+    return selectedEntries.containsKey(entryId);
+  }
+
+  EntryCategory _getEntryById(int id) {
+    return _entryCategoryList.firstWhere((e) => e.id == id);
+  }
+
+  void deleteSelectedEntryCategories() {
+    for (int entryId in selectedEntries.keys) {
+      EntryCategory entry = _getEntryById(entryId);
+      delete(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
   }
 }

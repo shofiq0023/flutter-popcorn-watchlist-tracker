@@ -30,4 +30,17 @@ class EntryCategoryDatabaseService {
   Future<void> delete(int entityId) async {
     box.remove(entityId);
   }
+
+  /// Delete all categories
+  Future<void> deleteAll() async {
+    box.removeAll();
+  }
+
+  /// Clear database and insert new categories
+  Future<void> clearAndInsert(List<EntryCategory> categories) async {
+    await deleteAll();
+    for (EntryCategory category in categories) {
+      await add(category);
+    }
+  }
 }

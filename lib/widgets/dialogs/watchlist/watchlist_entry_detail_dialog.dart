@@ -3,7 +3,9 @@ import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/utils/utils.dart';
+import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
 import 'package:provider/provider.dart';
 
 class WatchlistEntryDetailDialog extends StatefulWidget {
@@ -35,11 +37,11 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     _selectedCategory = entry.category.target;
     _selectedPriority = entry.priority;
     _isEntryRecommendable = entry.isRecommendable;
+    _isEntryFinished = entry.isFinished;
 
     _isUpcomingEntry = entry.isUpcoming;
     _estimatedReleaseDateController.text = Utils.dateTimeToStrDate(entry.estimatedReleaseDate);
 
-    _isEntryFinished = entry.isFinished;
     _entryFinishedDateController.text = Utils.dateTimeToStrDate(entry.finishedAt);
 
     _entryCreationDateController.text = Utils.dateTimeToStrDateWithTime(entry.createdAt);
@@ -148,6 +150,19 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                 },
                 items: Utils.getPriorityDropdown(),
               ),
+
+              /// isFinished entry checkbox
+              CheckboxListTile(
+                title: Text("Finished"),
+                value: _isEntryFinished,
+                onChanged: (bool? newValue) {
+                  setState(() {
+                    _isEntryFinished = newValue!;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
           
               /// Recommendable entry checkbox
               CheckboxListTile(
@@ -245,7 +260,22 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
               },
             ),
 
-            /// Create button
+            /// Update button
+            Consumer<WatchlistEntryProvider>(
+              builder: (context, provider, child) {
+                return MaterialButton(
+                  onPressed: () {
+                    _deleteWatchlistEntry(provider, context);
+                  },
+                  child: Text(
+                    "DELETE",
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                );
+              },
+            ),
             Consumer<WatchlistEntryProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
@@ -274,13 +304,25 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     entry.title = _titleController.text;
     entry.category.target = _selectedCategory!;
     entry.priority = _selectedPriority;
+    entry.isFinished = _isEntryFinished;
     entry.isRecommendable = _isEntryRecommendable;
 
     entry.isUpcoming = _isUpcomingEntry;
     entry.estimatedReleaseDate = _isUpcomingEntry ? Utils.strDateToDateTime(_estimatedReleaseDateController.text) : null;
 
     provider.update(entry);
+    ToastHelper.showSuccessToast("Successfully updated entry");
     Navigator.pop(context);
+  }
+
+  /// Delete the current entry
+  void _deleteWatchlistEntry(WatchlistEntryProvider provider, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => DeleteConfirmationDialog(
+        watchlistEntry: widget.watchlistEntry,
+      ),
+    );
   }
 
   /// Show date picker popup

@@ -8,7 +8,8 @@ class EntriesUnfinishedWindow extends StatefulWidget {
   const EntriesUnfinishedWindow({super.key});
 
   @override
-  State<EntriesUnfinishedWindow> createState() => _EntriesUnfinishedWindowState();
+  State<EntriesUnfinishedWindow> createState() =>
+      _EntriesUnfinishedWindowState();
 }
 
 class _EntriesUnfinishedWindowState extends State<EntriesUnfinishedWindow> {
@@ -37,7 +38,11 @@ class _EntriesUnfinishedWindowState extends State<EntriesUnfinishedWindow> {
               ),
               itemCount: entries.length,
               itemBuilder: (context, index) {
-                return WatchlistItemWidget(watchlistEntry: entries[index]);
+                return WatchlistItemWidget(
+                  watchlistEntry: entries[index],
+                  isSelected: provider.isSelectedEntry(entries[index]),
+                  isInSelectionMode: provider.isSelectionMode,
+                );
               },
             );
           },

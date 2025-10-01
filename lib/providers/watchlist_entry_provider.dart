@@ -7,14 +7,31 @@ class WatchlistEntryProvider extends ChangeNotifier {
   final searchToggleTitle = "Search...";
   final searchTextController = TextEditingController();
 
+  int _pageIndex = 0;
   late WatchlistEntryDatabaseService db;
   bool _isSearching = false;
+  bool _isSelectionMode = false;
 
-  List<WatchlistEntry> _watchList = [];
+  List<WatchlistEntry> _allWatchList = [];
+  List<WatchlistEntry> _unfinishedWatchList = [];
   List<WatchlistEntry> _finishedWatchList = [];
+  Map<int, int> selectedEntries = {};
+  String _currentSortType = 'default';
+
+  final Set<String> _selectedFilterOptions = {};
 
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
+    loadAllEntry();
+  }
+
+  void setPageIndex(int index) {
+    _pageIndex = index;
+    notifyListeners();
+  }
+
+  int get pageIndex {
+    return _pageIndex;
   }
 
   /// Build dynamic AppTitle bar
@@ -63,37 +80,102 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadAllEntry() async {
+    _allWatchList = await db.getAll();
+    _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
+    _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
+    notifyListeners();
+  }
+
+  String get currentSortType => _currentSortType;
+
+  /// Get watch list
   Future<List<WatchlistEntry>> get watchList async {
+    loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
-    _watchList = await db.getUnfinishedEntries();
 
-    _watchList.map((c) => print(c.toString()));
-
-    if (searchText.isEmpty) {
-      return _watchList;
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
     }
 
     List<WatchlistEntry> filteredWatchList =
-        _watchList
+        _unfinishedWatchList
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
+
+    filteredWatchList = filterWatchList(filteredWatchList);
 
     return filteredWatchList;
   }
 
+  /// Get finished watch list
   Future<List<WatchlistEntry>> get finishedWatchList async {
+    loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
-    _finishedWatchList = await db.getFinishedEntries();
 
-    if (searchText.isEmpty) {
-      return _finishedWatchList;
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
     }
 
     List<WatchlistEntry> filteredWatchList =
         _finishedWatchList
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
+
+    filteredWatchList = filterWatchList(filteredWatchList);
+
     return filteredWatchList;
+  }
+
+  List<WatchlistEntry> filterWatchList(List<WatchlistEntry> watchList) {
+    if (_selectedFilterOptions.isEmpty) {
+      return watchList;
+    }
+
+    const String recommended = "Recommended";
+    const String upcoming = "Upcoming";
+
+    final bool hasRecommended = _selectedFilterOptions.contains(recommended);
+    final bool hasUpcoming = _selectedFilterOptions.contains(upcoming);
+    final Set<String> categories = _selectedFilterOptions
+        .where((o) => o != recommended && o != upcoming)
+        .toSet();
+
+    return watchList.where((w) {
+      // Check if entry passes the recommended filter (if applicable)
+      if (hasRecommended && w.isRecommendable != true) {
+        return false;
+      }
+
+      // Check if entry passes the upcoming filter (if applicable)
+      if (hasUpcoming && w.isUpcoming != true) {
+        return false;
+      }
+
+      // Check if entry matches category filter (if categories are specified)
+      if (categories.isNotEmpty &&
+          !categories.contains(w.category.target?.categoryName)) {
+        return false;
+      }
+
+      return true;
+    }).toList();
+  }
+
+  void addToFilterOption(String filterOption) {
+    _selectedFilterOptions.add(filterOption);
+    notifyListeners();
+  }
+
+  void removeFromFilterOption(String filterOption) {
+    _selectedFilterOptions.remove(filterOption);
+    notifyListeners();
+  }
+
+  bool selectedFilterOptionsContains(String item) {
+    return _selectedFilterOptions.contains(item);
   }
 
   Future<void> add(WatchlistEntry entity) async {
@@ -117,6 +199,139 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
   int entryCount() {
-    return _watchList.length;
+    return _unfinishedWatchList.length;
+  }
+
+  bool get isSelectionMode => _isSelectionMode;
+
+  void enableSelectionMode() {
+    _isSelectionMode = true;
+    notifyListeners();
+  }
+
+  void disableSelectionMode() {
+    selectedEntries.clear();
+    _isSelectionMode = false;
+    notifyListeners();
+  }
+
+  void addToSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    selectedEntries.putIfAbsent(entryId, () => entryId);
+    notifyListeners();
+  }
+
+  void removeFromSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    selectedEntries.remove(entryId);
+
+    if (selectedEntries.isEmpty) {
+      disableSelectionMode();
+    }
+    notifyListeners();
+  }
+
+  bool isSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    return selectedEntries.containsKey(entryId);
+  }
+
+  void finishSelectedEntries({recommendable = false}) {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isRecommendable = recommendable;
+      finished(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  void removeFinishStatusFromSelectedEntries() {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isFinished = false;
+      update(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  void removeFinishAndRecommendStatusFromSelectedEntries({
+    recommendable = false,
+  }) {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isFinished = false;
+      entry.isRecommendable = recommendable;
+      update(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  WatchlistEntry _getEntryById(int id) {
+    return _allWatchList.firstWhere((e) => e.id == id);
+  }
+
+  void deleteSelectedEntries() {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      delete(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+
+  void sortWatchlist(String sortType) {
+    _currentSortType = sortType;
+
+    switch (sortType) {
+      case 'title_asc':
+        _unfinishedWatchList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+        _finishedWatchList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+        break;
+
+      case 'title_desc':
+        _unfinishedWatchList.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        _finishedWatchList.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        break;
+
+      case 'date_asc':
+        _unfinishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        _finishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        break;
+
+      case 'date_desc':
+        _unfinishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        _finishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+
+      case 'priority_desc':
+        _unfinishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
+        _finishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
+        break;
+
+      case 'default':
+        _unfinishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
+        _finishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
+        break;
+
+      default:
+        break;
+    }
+
+    notifyListeners();
   }
 }

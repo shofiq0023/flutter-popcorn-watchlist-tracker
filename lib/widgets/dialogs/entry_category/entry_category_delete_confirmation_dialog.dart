@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/utils/toast_helper.dart';
 import 'package:provider/provider.dart';
 
 class EntryCategoryDeleteConfirmationDialog extends StatefulWidget {
@@ -40,6 +41,7 @@ class _EntryCategoryDeleteConfirmationDialogState extends State<EntryCategoryDel
                   context,
                   listen: false,
                 ).delete(widget.entryCategory);
+                ToastHelper.showSuccessToast("Successfully deleted the category");
                 Navigator.pop(context);
               },
             ),

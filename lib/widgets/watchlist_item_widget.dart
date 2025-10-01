@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/dialogs//watchlist/watchlist_entry_finished_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_detail_dialog.dart';
+import 'package:provider/provider.dart';
 
 class WatchlistItemWidget extends StatefulWidget {
   final WatchlistEntry watchlistEntry;
+  final bool isSelected;
+  final bool isInSelectionMode;
 
-  const WatchlistItemWidget({super.key, required this.watchlistEntry});
+  const WatchlistItemWidget({
+    super.key,
+    required this.watchlistEntry,
+    required this.isSelected,
+    required this.isInSelectionMode,
+  });
 
   @override
   State<WatchlistItemWidget> createState() => _WatchlistItemWidgetState();
@@ -16,16 +25,34 @@ class WatchlistItemWidget extends StatefulWidget {
 class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<WatchlistEntryProvider>(context);
+
     return GestureDetector(
+      onLongPress: () {
+        if (widget.isInSelectionMode) {
+          provider.disableSelectionMode();
+        } else {
+          provider.enableSelectionMode();
+          provider.addToSelectedEntry(widget.watchlistEntry);
+        }
+      },
       onTap: () {
-        showUpdateDialog();
+        if (widget.isInSelectionMode) {
+          if (widget.isSelected) {
+            provider.removeFromSelectedEntry(widget.watchlistEntry);
+          } else {
+            provider.addToSelectedEntry(widget.watchlistEntry);
+          }
+        } else {
+          showUpdateDialog();
+        }
       },
       child: Container(
         clipBehavior: Clip.antiAlias,
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: getBorderStyleBasedOnUpcomingStatus(),
+          border: getBorderForSelectionMode(),
           borderRadius: BorderRadius.circular(5.0),
           boxShadow: const <BoxShadow>[
             BoxShadow(
@@ -42,10 +69,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               /// Priority tag
-              Container(
-                width: 4.0,
-                color: getPriorityBasedColor(),
-              ),
+              Container(width: 4.0, color: getPriorityBasedColor()),
 
               const SizedBox(width: 12.0),
 
@@ -96,6 +120,10 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                         ? IconButton(
                           /// Delete Button
                           onPressed: () {
+                            if (widget.isInSelectionMode) {
+                              return;
+                            }
+
                             showDialog(
                               context: context,
                               builder:
@@ -106,13 +134,19 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                           },
                           icon: Icon(
                             Icons.delete_forever,
-                            color: Colors.red,
+                            color:
+                                widget.isInSelectionMode
+                                    ? Colors.grey
+                                    : Colors.red,
                             size: 28.0,
                           ),
                         )
                         : IconButton(
                           /// Finish button
                           onPressed: () {
+                            if (widget.isInSelectionMode) {
+                              return;
+                            }
                             showDialog(
                               context: context,
                               builder:
@@ -123,7 +157,10 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                           },
                           icon: Icon(
                             Icons.check_circle,
-                            color: Colors.green,
+                            color:
+                                widget.isInSelectionMode
+                                    ? Colors.grey
+                                    : Colors.green,
                             size: 28.0,
                           ),
                         ),
@@ -160,15 +197,15 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
     return Colors.transparent;
   }
 
-  Border? getBorderStyleBasedOnUpcomingStatus() {
-    // WatchlistEntry entry = widget.watchlistEntry;
-    //
-    // if (entry.isUpcoming) {
-    //   return Border.all(
-    //     color: Colors.black38, // Border color
-    //     width: 2.0, // Border width
-    //   );
-    // }
+  Border? getBorderForSelectionMode() {
+    bool isSelected = widget.isSelected;
+
+    if (isSelected) {
+      return Border.all(
+        color: Colors.black38, // Border color
+        width: 2.0, // Border width
+      );
+    }
 
     return null;
   }

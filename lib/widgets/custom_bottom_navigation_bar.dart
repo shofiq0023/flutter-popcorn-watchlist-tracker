@@ -1,43 +1,35 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
+  final int selectedIndex;
   final Function(int) onIndexSelected;
-  const CustomBottomNavigationBar({super.key, required this.onIndexSelected});
+
+  const CustomBottomNavigationBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onIndexSelected,
+  });
 
   @override
-  State<CustomBottomNavigationBar> createState() => _CustomBottomNavigationBarState();
+  State<CustomBottomNavigationBar> createState() =>
+      _CustomBottomNavigationBarState();
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  int pageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.black12)),
         boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.2),
-            blurRadius: 10,
-          ),
+          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.2), blurRadius: 10),
         ],
       ),
       child: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          // labelTextStyle: MaterialStateProperty.all(
-          //   TextStyle(color: CustomColors.offwhite),
-          // ),
-        ),
+        data: NavigationBarThemeData(),
         child: NavigationBar(
-          // indicatorColor: navBarSelectedColor,
-          // backgroundColor: navBarBg,
-          selectedIndex: pageIndex,
+          selectedIndex: widget.selectedIndex,
           onDestinationSelected: (int index) {
-            setState(() {
-              pageIndex = index;
-            });
-
-            // Calls the index passing function
             widget.onIndexSelected(index);
           },
           destinations: getBottomNavList(),
@@ -50,20 +42,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     return [
       NavigationDestination(
         selectedIcon: const Icon(Icons.list_alt),
-        icon: Icon(
-          Icons.list,
-          // color: getIconColor(currentIndex: pageIndex, targetIndex: 0),
-        ),
+        icon: Icon(Icons.list),
         label: 'Watch List',
       ),
       NavigationDestination(
-        selectedIcon: const Icon(Icons.featured_play_list),
-        icon: Icon(
-          Icons.playlist_add_check,
-          // color: getIconColor(currentIndex: pageIndex, targetIndex: 1),
-        ),
+        selectedIcon: const Icon(Icons.fact_check),
+        icon: Icon(Icons.playlist_add_check),
         label: 'Finished',
-      )
+      ),
     ];
   }
 }

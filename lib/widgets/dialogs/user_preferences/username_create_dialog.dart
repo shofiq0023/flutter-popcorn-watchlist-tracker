@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn/models/entities/entry_category.dart';
-import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/providers/user_preferences_provider.dart';
 import 'package:popcorn/utils/toast_helper.dart';
 import 'package:provider/provider.dart';
 
-class EntryCategoryCreateDialog extends StatefulWidget {
-  const EntryCategoryCreateDialog({super.key});
+class UsernameCreateDialog extends StatefulWidget {
+  final String username;
+  const UsernameCreateDialog({super.key, required this.username});
 
   @override
-  State<EntryCategoryCreateDialog> createState() => _EntryCategoryCreateDialogState();
+  State<UsernameCreateDialog> createState() => _UsernameCreateDialogState();
 }
 
-class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
-  final TextEditingController _entryCategoryNameTextController = TextEditingController();
+class _UsernameCreateDialogState extends State<UsernameCreateDialog> {
+  final TextEditingController _usernameTextController = TextEditingController();
 
   bool _nameError = false;
-  
+
+  @override
+  void initState() {
+    _usernameTextController.text = widget.username;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Create a new category"),
+      title: const Text("What should I call you?"),
       content: SizedBox(
         width: 600,
         child: Column(
@@ -27,7 +33,7 @@ class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
           children: [
             /// Title of the entry
             TextField(
-              controller: _entryCategoryNameTextController,
+              controller: _usernameTextController,
               textCapitalization: TextCapitalization.words,
               style: const TextStyle(color: Colors.black),
               decoration: InputDecoration(
@@ -39,12 +45,12 @@ class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
                 )
                     : null,
                 label: Text(
-                  "Category name",
+                  "Username",
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
               onChanged: (value) {
-                if (_entryCategoryNameTextController.text.isEmpty) {
+                if (_usernameTextController.text.isEmpty) {
                   setState(() {
                     _nameError = true;
                   });
@@ -72,18 +78,18 @@ class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
             ),
 
             /// Create button
-            Consumer<EntryCategoryProvider>(
+            Consumer<UserPreferencesProvider>(
               builder: (context, provider, child) {
                 return MaterialButton(
                   onPressed: () {
                     if (isSubmittable()) {
-                      _createEntryCategory(provider, context);
+                      _usernameUpdate(provider, context);
                     } else {
-                      ToastHelper.showWarningToast("Please enter a name!");
+                      ToastHelper.showWarningToast("Please enter your name!");
                     }
                   },
                   child: Text(
-                    "CREATE",
+                    "SAVE",
                     style: TextStyle(
                       color: isSubmittable() ? Colors.green : Colors.grey,
                     ),
@@ -98,20 +104,15 @@ class _EntryCategoryCreateDialogState extends State<EntryCategoryCreateDialog> {
   }
 
   /// Add a new entry to the database
-  void _createEntryCategory(
-      EntryCategoryProvider provider,
-      BuildContext context,
-      ) {
-    EntryCategory entry = EntryCategory();
-    entry.categoryName = _entryCategoryNameTextController.text;
-
-    provider.add(entry);
-    ToastHelper.showSuccessToast("Successfully added a category");
+  void _usernameUpdate(UserPreferencesProvider provider, BuildContext context,) {
+    String username = _usernameTextController.text;
+    provider.updateUsername(username);
+    ToastHelper.showSuccessToast("Successfully updated your name!");
     Navigator.pop(context);
   }
 
   /// Check the category name
   bool isSubmittable() {
-    return _entryCategoryNameTextController.text.isNotEmpty;
+    return _usernameTextController.text.isNotEmpty;
   }
 }

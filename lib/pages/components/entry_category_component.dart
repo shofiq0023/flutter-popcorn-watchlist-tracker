@@ -37,7 +37,11 @@ class _EntryCategoryComponentState extends State<EntryCategoryComponent> {
               ),
               itemCount: entries.length,
               itemBuilder: (context, index) {
-                return EntryCategoryItemWidget(entryCategory: entries[index]);
+                return EntryCategoryItemWidget(
+                  entryCategory: entries[index],
+                  isInSelectionMode: provider.isInSelectionMode,
+                  isSelected: provider.isSelectedEntryCategory(entries[index]),
+                );
               },
             );
           },
