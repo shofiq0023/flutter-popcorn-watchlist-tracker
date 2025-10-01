@@ -13,7 +13,7 @@ class EntryCategoryProvider extends ChangeNotifier {
   List<EntryCategory> _entryCategoryList = [];
   Map<int, int> selectedEntries = {};
 
-  final List<String> _filterOptions = ['Recommended'];
+  final List<String> _filterOptions = ['Recommended', 'Upcoming'];
 
   EntryCategoryProvider() {
     db = EntryCategoryDatabaseService();

@@ -18,7 +18,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
   Map<int, int> selectedEntries = {};
   String _currentSortType = 'default';
 
-  Set<String> _selectedFilterOptions = {};
+  final Set<String> _selectedFilterOptions = {};
 
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
@@ -99,10 +99,6 @@ class WatchlistEntryProvider extends ChangeNotifier {
       sortWatchlist(_currentSortType);
     }
 
-    if (searchText.isEmpty) {
-      return _unfinishedWatchList;
-    }
-
     List<WatchlistEntry> filteredWatchList =
         _unfinishedWatchList
             .where((w) => w.title.toLowerCase().contains(searchText))
@@ -123,16 +119,10 @@ class WatchlistEntryProvider extends ChangeNotifier {
       sortWatchlist(_currentSortType);
     }
 
-    if (searchText.isEmpty) {
-      return _finishedWatchList;
-    }
-
     List<WatchlistEntry> filteredWatchList =
         _finishedWatchList
             .where((w) => w.title.toLowerCase().contains(searchText))
             .toList();
-
-    print(">>>>>>>>>>>>>>>>>>>> WHATS UP");
 
     filteredWatchList = filterWatchList(filteredWatchList);
 
@@ -140,25 +130,38 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
   List<WatchlistEntry> filterWatchList(List<WatchlistEntry> watchList) {
-    List<WatchlistEntry> filteredWatchList = watchList;
-
-    if (_selectedFilterOptions.isNotEmpty) {
-      if (_selectedFilterOptions.contains("Recommended")) {
-        filteredWatchList =
-            watchList.where((w) => w.isRecommendable == true).toList();
-      }
-
-      filteredWatchList =
-          watchList
-              .where(
-                (w) => _selectedFilterOptions.contains(
-              w.category.target!.categoryName,
-            ),
-          ).toList();
+    if (_selectedFilterOptions.isEmpty) {
+      return watchList;
     }
 
-    print(">>>>>>>>>>>>>>>>>>>>>>>> Filtered list");
-    return filteredWatchList;
+    const String recommended = "Recommended";
+    const String upcoming = "Upcoming";
+
+    final bool hasRecommended = _selectedFilterOptions.contains(recommended);
+    final bool hasUpcoming = _selectedFilterOptions.contains(upcoming);
+    final Set<String> categories = _selectedFilterOptions
+        .where((o) => o != recommended && o != upcoming)
+        .toSet();
+
+    return watchList.where((w) {
+      // Check if entry passes the recommended filter (if applicable)
+      if (hasRecommended && w.isRecommendable != true) {
+        return false;
+      }
+
+      // Check if entry passes the upcoming filter (if applicable)
+      if (hasUpcoming && w.isUpcoming != true) {
+        return false;
+      }
+
+      // Check if entry matches category filter (if categories are specified)
+      if (categories.isNotEmpty &&
+          !categories.contains(w.category.target?.categoryName)) {
+        return false;
+      }
+
+      return true;
+    }).toList();
   }
 
   void addToFilterOption(String filterOption) {
