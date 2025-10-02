@@ -20,6 +20,8 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
   final Set<String> _selectedFilterOptions = {};
 
+  Set<String> get selectedFilterOptions => _selectedFilterOptions;
+
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
     loadAllEntry();
@@ -171,6 +173,12 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
   void removeFromFilterOption(String filterOption) {
     _selectedFilterOptions.remove(filterOption);
+    notifyListeners();
+  }
+
+  void clearSortingAndFilter() {
+    sortWatchlist("default");
+    _selectedFilterOptions.clear();
     notifyListeners();
   }
 

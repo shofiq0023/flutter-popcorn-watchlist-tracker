@@ -25,15 +25,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     {'date_asc': 'Creation Date (Old to New)'},
   ];
 
-  final List<String> multiSelectItems = [
-    'Option A',
-    'Option B',
-    'Option C',
-    'Option D',
-    'Option E',
-    'Option F',
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -59,10 +50,21 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
 
           // Title
           Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Sort & Filter',
-              style: Theme.of(context).textTheme.headlineSmall,
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 28),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Sort & Filter',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Provider.of<WatchlistEntryProvider>(context, listen: false).clearSortingAndFilter();
+                  },
+                  child: Text('Reset', style: TextStyle(fontSize: 16),),
+                )
+              ],
             ),
           ),
 
@@ -143,7 +145,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           itemCount: entryCategoryProvider.filterOptions.length,
           itemBuilder: (context, index) {
             final item = entryCategoryProvider.filterOptions[index];
-            final isSelected = watchlistProvider.selectedFilterOptionsContains(item);
+            final isSelected = watchlistProvider.selectedFilterOptionsContains(
+              item,
+            );
 
             return Card(
               child: CheckboxListTile(

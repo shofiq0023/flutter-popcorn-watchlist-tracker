@@ -42,12 +42,12 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
                     const Icon(Icons.sort),
 
                     // Show the dot only if sorting is active
-                    if (provider.currentSortType != "default") // default
+                    if (provider.currentSortType != "default" || provider.selectedFilterOptions.isNotEmpty) // default
                       Positioned(
                         right: -1,
                         top: -1,
                         child: Container(
-                          padding: const EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color: Colors.red, // dot color
                             shape: BoxShape.circle,
