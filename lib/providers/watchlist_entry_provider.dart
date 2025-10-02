@@ -95,13 +95,15 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
 
+
   void setPageIndex(int index) {
     _pageIndex = index;
     notifyListeners();
   }
 
 
-  /// Build dynamic AppTitle bar
+
+  // ==========> FUNCTION FOR BUILDING A DYNAMIC TITLE BAR
   Widget buildTitle() {
     if (_isSearching) {
       return TextField(
@@ -245,6 +247,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
 
 
   // ==========> DATABASE RELATED FUNCTIONS
