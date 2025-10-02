@@ -3,38 +3,103 @@ import 'package:popcorn/database_services/watchlist_entry_db_service.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 
 class WatchlistEntryProvider extends ChangeNotifier {
+  late WatchlistEntryDatabaseService db;
+
+  // For building dynamic title
   final homePageTitle = "Watch list";
   final searchToggleTitle = "Search...";
   final searchTextController = TextEditingController();
-
-  int _pageIndex = 0;
-  late WatchlistEntryDatabaseService db;
   bool _isSearching = false;
+
+  // For selection mode toggle
   bool _isSelectionMode = false;
 
+  // For tracking unfinished and finished tab index
+  int _pageIndex = 0;
+
+  // Storing the watchlist
   List<WatchlistEntry> _allWatchList = [];
   List<WatchlistEntry> _unfinishedWatchList = [];
   List<WatchlistEntry> _finishedWatchList = [];
-  Map<int, int> selectedEntries = {};
-  String _currentSortType = 'default';
 
+  // Indicating the selecting watchlist entry
+  Map<int, int> selectedEntries = {};
+
+  String _currentSortType = 'default';
   final Set<String> _selectedFilterOptions = {};
 
-  Set<String> get selectedFilterOptions => _selectedFilterOptions;
 
+  // =============================== FUNCTIONS =================================
+
+  // ===========> CONSTRUCTOR
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
     loadAllEntry();
   }
+  Future<void> loadAllEntry() async {
+    _allWatchList = await db.getAll();
+    _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
+    _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
+    notifyListeners();
+  }
+
+
+  // ==========> GETTERS
+  int get pageIndex {
+    return _pageIndex;
+  }
+  Set<String> get selectedFilterOptions => _selectedFilterOptions;
+  String get currentSortType => _currentSortType;
+  Future<List<WatchlistEntry>> get watchList async {
+    loadAllEntry();
+    String searchText = searchTextController.text.toLowerCase();
+
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
+    }
+
+    List<WatchlistEntry> filteredWatchList =
+    _unfinishedWatchList
+        .where((w) => w.title.toLowerCase().contains(searchText))
+        .toList();
+
+    filteredWatchList = filterWatchList(filteredWatchList);
+
+    return filteredWatchList;
+  }
+  Future<List<WatchlistEntry>> get finishedWatchList async {
+    loadAllEntry();
+    String searchText = searchTextController.text.toLowerCase();
+
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
+    }
+
+    List<WatchlistEntry> filteredWatchList =
+    _finishedWatchList
+        .where((w) => w.title.toLowerCase().contains(searchText))
+        .toList();
+
+    filteredWatchList = filterWatchList(filteredWatchList);
+
+    return filteredWatchList;
+  }
+  int entryCount() {
+    return _unfinishedWatchList.length;
+  }
+  bool get isSelectionMode => _isSelectionMode;
+  WatchlistEntry _getEntryById(int id) {
+    return _allWatchList.firstWhere((e) => e.id == id);
+  }
+
 
   void setPageIndex(int index) {
     _pageIndex = index;
     notifyListeners();
   }
 
-  int get pageIndex {
-    return _pageIndex;
-  }
 
   /// Build dynamic AppTitle bar
   Widget buildTitle() {
@@ -63,17 +128,14 @@ class WatchlistEntryProvider extends ChangeNotifier {
       return Text(homePageTitle);
     }
   }
-
   void clearSearch() {
     searchTextController.clear();
     notifyListeners();
   }
-
   void setSearchText(String text) {
     searchTextController.text = text;
     notifyListeners();
   }
-
   void toggleSearch() {
     _isSearching = !_isSearching;
     if (!_isSearching) {
@@ -82,55 +144,9 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadAllEntry() async {
-    _allWatchList = await db.getAll();
-    _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
-    _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
-    notifyListeners();
-  }
 
-  String get currentSortType => _currentSortType;
 
-  /// Get watch list
-  Future<List<WatchlistEntry>> get watchList async {
-    loadAllEntry();
-    String searchText = searchTextController.text.toLowerCase();
-
-    // Apply current sorting after loading
-    if (_currentSortType != 'default') {
-      sortWatchlist(_currentSortType);
-    }
-
-    List<WatchlistEntry> filteredWatchList =
-        _unfinishedWatchList
-            .where((w) => w.title.toLowerCase().contains(searchText))
-            .toList();
-
-    filteredWatchList = filterWatchList(filteredWatchList);
-
-    return filteredWatchList;
-  }
-
-  /// Get finished watch list
-  Future<List<WatchlistEntry>> get finishedWatchList async {
-    loadAllEntry();
-    String searchText = searchTextController.text.toLowerCase();
-
-    // Apply current sorting after loading
-    if (_currentSortType != 'default') {
-      sortWatchlist(_currentSortType);
-    }
-
-    List<WatchlistEntry> filteredWatchList =
-        _finishedWatchList
-            .where((w) => w.title.toLowerCase().contains(searchText))
-            .toList();
-
-    filteredWatchList = filterWatchList(filteredWatchList);
-
-    return filteredWatchList;
-  }
-
+  // ==========> FILTERING AND SORTING RELATED FUNCTIONS
   List<WatchlistEntry> filterWatchList(List<WatchlistEntry> watchList) {
     if (_selectedFilterOptions.isEmpty) {
       return watchList;
@@ -165,154 +181,41 @@ class WatchlistEntryProvider extends ChangeNotifier {
       return true;
     }).toList();
   }
-
   void addToFilterOption(String filterOption) {
     _selectedFilterOptions.add(filterOption);
     notifyListeners();
   }
-
   void removeFromFilterOption(String filterOption) {
     _selectedFilterOptions.remove(filterOption);
     notifyListeners();
   }
-
   void clearSortingAndFilter() {
     sortWatchlist("default");
     _selectedFilterOptions.clear();
     notifyListeners();
   }
-
   bool selectedFilterOptionsContains(String item) {
     return _selectedFilterOptions.contains(item);
   }
-
-  Future<void> add(WatchlistEntry entity) async {
-    await db.add(entity);
-    notifyListeners();
-  }
-
-  Future<void> update(WatchlistEntry entity) async {
-    await db.update(entity);
-    notifyListeners();
-  }
-
-  Future<void> finished(WatchlistEntry entity) async {
-    await db.finished(entity);
-    notifyListeners();
-  }
-
-  Future<void> delete(WatchlistEntry entity) async {
-    await db.delete(entity.id);
-    notifyListeners();
-  }
-
-  int entryCount() {
-    return _unfinishedWatchList.length;
-  }
-
-  bool get isSelectionMode => _isSelectionMode;
-
-  void enableSelectionMode() {
-    _isSelectionMode = true;
-    notifyListeners();
-  }
-
-  void disableSelectionMode() {
-    selectedEntries.clear();
-    _isSelectionMode = false;
-    notifyListeners();
-  }
-
-  void addToSelectedEntry(WatchlistEntry entry) {
-    int entryId = entry.id;
-    selectedEntries.putIfAbsent(entryId, () => entryId);
-    notifyListeners();
-  }
-
-  void removeFromSelectedEntry(WatchlistEntry entry) {
-    int entryId = entry.id;
-    selectedEntries.remove(entryId);
-
-    if (selectedEntries.isEmpty) {
-      disableSelectionMode();
-    }
-    notifyListeners();
-  }
-
-  bool isSelectedEntry(WatchlistEntry entry) {
-    int entryId = entry.id;
-    return selectedEntries.containsKey(entryId);
-  }
-
-  void finishSelectedEntries({recommendable = false}) {
-    for (int entryId in selectedEntries.keys) {
-      WatchlistEntry entry = _getEntryById(entryId);
-      entry.isRecommendable = recommendable;
-      finished(entry);
-    }
-
-    disableSelectionMode();
-    notifyListeners();
-  }
-
-  void removeFinishStatusFromSelectedEntries() {
-    for (int entryId in selectedEntries.keys) {
-      WatchlistEntry entry = _getEntryById(entryId);
-      entry.isFinished = false;
-      update(entry);
-    }
-
-    disableSelectionMode();
-    notifyListeners();
-  }
-
-  void removeFinishAndRecommendStatusFromSelectedEntries({
-    recommendable = false,
-  }) {
-    for (int entryId in selectedEntries.keys) {
-      WatchlistEntry entry = _getEntryById(entryId);
-      entry.isFinished = false;
-      entry.isRecommendable = recommendable;
-      update(entry);
-    }
-
-    disableSelectionMode();
-    notifyListeners();
-  }
-
-  WatchlistEntry _getEntryById(int id) {
-    return _allWatchList.firstWhere((e) => e.id == id);
-  }
-
-  void deleteSelectedEntries() {
-    for (int entryId in selectedEntries.keys) {
-      WatchlistEntry entry = _getEntryById(entryId);
-      delete(entry);
-    }
-
-    disableSelectionMode();
-    notifyListeners();
-  }
-
   void sortWatchlist(String sortType) {
     _currentSortType = sortType;
 
     switch (sortType) {
       case 'title_asc':
         _unfinishedWatchList.sort(
-          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+              (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
         );
         _finishedWatchList.sort(
-          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+              (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
         );
         break;
 
       case 'title_desc':
         _unfinishedWatchList.sort(
-          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+              (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
         );
         _finishedWatchList.sort(
-          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+              (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
         );
         break;
 
@@ -340,6 +243,96 @@ class WatchlistEntryProvider extends ChangeNotifier {
         break;
     }
 
+    notifyListeners();
+  }
+
+
+  // ==========> DATABASE RELATED FUNCTIONS
+  Future<void> add(WatchlistEntry entity) async {
+    await db.add(entity);
+    notifyListeners();
+  }
+  Future<void> update(WatchlistEntry entity) async {
+    await db.update(entity);
+    notifyListeners();
+  }
+  Future<void> finished(WatchlistEntry entity) async {
+    await db.finished(entity);
+    notifyListeners();
+  }
+  Future<void> delete(WatchlistEntry entity) async {
+    await db.delete(entity.id);
+    notifyListeners();
+  }
+
+
+
+  // ==========> SELECTION MODE RELATED FUNCTIONS
+  void enableSelectionMode() {
+    _isSelectionMode = true;
+    notifyListeners();
+  }
+  void disableSelectionMode() {
+    selectedEntries.clear();
+    _isSelectionMode = false;
+    notifyListeners();
+  }
+  void addToSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    selectedEntries.putIfAbsent(entryId, () => entryId);
+    notifyListeners();
+  }
+  void removeFromSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    selectedEntries.remove(entryId);
+
+    if (selectedEntries.isEmpty) {
+      disableSelectionMode();
+    }
+    notifyListeners();
+  }
+  bool isSelectedEntry(WatchlistEntry entry) {
+    int entryId = entry.id;
+    return selectedEntries.containsKey(entryId);
+  }
+  void finishSelectedEntries({recommendable = false}) {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isRecommendable = recommendable;
+      finished(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+  void removeFinishStatusFromSelectedEntries() {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isFinished = false;
+      update(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+  void removeFinishAndRecommendStatusFromSelectedEntries({recommendable = false}) {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      entry.isFinished = false;
+      entry.isRecommendable = recommendable;
+      update(entry);
+    }
+
+    disableSelectionMode();
+    notifyListeners();
+  }
+  void deleteSelectedEntries() {
+    for (int entryId in selectedEntries.keys) {
+      WatchlistEntry entry = _getEntryById(entryId);
+      delete(entry);
+    }
+
+    disableSelectionMode();
     notifyListeners();
   }
 }
