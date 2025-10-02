@@ -189,9 +189,9 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
     int entryPriority = widget.watchlistEntry.priority;
 
     if (entryPriority == 1) {
-      return Colors.red[700];
+      return Color(0xFFE53935);
     } else if (entryPriority == 2) {
-      return Colors.red[400];
+      return Color(0xFFFB8C00);
     }
 
     return Colors.transparent;
