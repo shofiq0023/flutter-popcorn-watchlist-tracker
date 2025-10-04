@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class GenericDeleteConfirmationDialog extends StatelessWidget {
   final String text;
@@ -13,10 +14,14 @@ class GenericDeleteConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Are you sure?'),
+      title: const Text(
+        'Are you sure?',
+        style: TextStyle(color: GlobalConst.whiteColor),
+      ),
+      backgroundColor: GlobalConst.dialogBoxBg,
       content: SizedBox(
         width: 600,
-        child: Text(text),
+        child: Text(text, style: TextStyle(color: GlobalConst.whiteColor)),
       ),
       actions: [
         Row(
@@ -24,7 +29,10 @@ class GenericDeleteConfirmationDialog extends StatelessWidget {
           children: [
             /// Close button
             MaterialButton(
-              child: const Text("NO"),
+              child: const Text(
+                "NO",
+                style: TextStyle(color: GlobalConst.greenColor),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -32,7 +40,10 @@ class GenericDeleteConfirmationDialog extends StatelessWidget {
 
             /// Confirmation Button
             MaterialButton(
-              child: const Text("YES", style: TextStyle(color: Colors.red)),
+              child: const Text(
+                "YES",
+                style: TextStyle(color: GlobalConst.redColor),
+              ),
               onPressed: () {
                 onAction();
                 Navigator.of(context).popUntil((route) => route is PageRoute);

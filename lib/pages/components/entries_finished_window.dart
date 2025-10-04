@@ -3,6 +3,7 @@ import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/watchlist_item_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class EntriesFinishedWindow extends StatefulWidget {
   const EntriesFinishedWindow({super.key});
@@ -20,9 +21,9 @@ class _EntriesFinishedWindowState extends State<EntriesFinishedWindow> {
           future: provider.watchList,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: GlobalConst.whiteColor),));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No entries found'));
+              return Center(child: Text('No entries found', style: TextStyle(color: GlobalConst.whiteColor)));
             }
 
             final entries = snapshot.data!;

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:popcorn/providers/user_preferences_provider.dart';
 import 'package:popcorn/utils/toast_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class UsernameCreateDialog extends StatefulWidget {
   final String username;
+
   const UsernameCreateDialog({super.key, required this.username});
 
   @override
@@ -25,7 +27,11 @@ class _UsernameCreateDialogState extends State<UsernameCreateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("What should I call you?"),
+      title: const Text(
+        "What should I call you?",
+        style: TextStyle(color: GlobalConst.whiteColor),
+      ),
+      backgroundColor: GlobalConst.dialogBoxBg,
       content: SizedBox(
         width: 600,
         child: Column(
@@ -35,18 +41,23 @@ class _UsernameCreateDialogState extends State<UsernameCreateDialog> {
             TextField(
               controller: _usernameTextController,
               textCapitalization: TextCapitalization.words,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: GlobalConst.whiteColor),
               decoration: InputDecoration(
                 error:
-                _nameError
-                    ? const Text(
-                  "Please enter a name!",
-                  style: TextStyle(color: Colors.redAccent),
-                )
-                    : null,
+                    _nameError
+                        ? const Text(
+                          "Please enter a name!",
+                          style: TextStyle(color: GlobalConst.redColor),
+                        )
+                        : null,
                 label: Text(
                   "Username",
-                  style: TextStyle(fontSize: 16.0),
+                  style: TextStyle(fontSize: 16.0, color: Color(0xFFCAC1FF)),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: GlobalConst.whiteColor,
+                  ), // Normal state
                 ),
               ),
               onChanged: (value) {
@@ -71,7 +82,10 @@ class _UsernameCreateDialogState extends State<UsernameCreateDialog> {
           children: [
             /// Close button
             MaterialButton(
-              child: const Text("CLOSE"),
+              child: const Text(
+                "CLOSE",
+                style: TextStyle(color: GlobalConst.whiteColor),
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -91,7 +105,7 @@ class _UsernameCreateDialogState extends State<UsernameCreateDialog> {
                   child: Text(
                     "SAVE",
                     style: TextStyle(
-                      color: isSubmittable() ? Colors.green : Colors.grey,
+                      color: isSubmittable() ? GlobalConst.greenColor : Colors.grey,
                     ),
                   ),
                 );
@@ -104,7 +118,7 @@ class _UsernameCreateDialogState extends State<UsernameCreateDialog> {
   }
 
   /// Add a new entry to the database
-  void _usernameUpdate(UserPreferencesProvider provider, BuildContext context,) {
+  void _usernameUpdate(UserPreferencesProvider provider, BuildContext context) {
     String username = _usernameTextController.text;
     provider.updateUsername(username);
     ToastHelper.showSuccessToast("Successfully updated your name!");

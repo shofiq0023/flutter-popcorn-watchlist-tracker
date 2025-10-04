@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:popcorn/database_services/database_helper.dart';
 import 'package:popcorn/pages/entry_category_page.dart';
 import 'package:popcorn/pages/import_export_page.dart';
-import 'package:popcorn/pages/settings_page.dart';
 import 'package:popcorn/pages/watchlist_home_page.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/import_export_provider.dart';
@@ -35,17 +34,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Popcorn',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      themeMode: ThemeMode.dark,
       home: const WatchlistHomePage(),
       initialRoute: '/home',
       routes: {
         '/home': (context) => const WatchlistHomePage(),
         '/entry-category': (context) => const EntryCategoryPage(),
-        '/import-export': (context) => const ImportExportPage(),
-        '/settings': (context) => const SettingsPage()
+        '/import-export': (context) => const ImportExportPage()
       },
     );
   }

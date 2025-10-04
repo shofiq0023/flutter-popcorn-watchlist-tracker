@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 import 'package:popcorn/widgets/dialogs/entry_category/entry_category_delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/entry_category/entry_category_detail_dialog.dart';
 import 'package:provider/provider.dart';
@@ -49,9 +50,9 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 2.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: GlobalConst.dialogBoxBg,
           border: getBorderForSelectionMode(),
           borderRadius: BorderRadius.circular(5.0),
           boxShadow: const <BoxShadow>[
@@ -65,7 +66,10 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(widget.entryCategory.categoryName),
+            Text(
+              widget.entryCategory.categoryName,
+              style: TextStyle(color: GlobalConst.whiteColor, fontSize: 18),
+            ),
             IconButton(
               onPressed: () {
                 if (widget.isInSelectionMode) {
@@ -82,7 +86,10 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
               },
               icon: Icon(
                 Icons.delete_forever,
-                color: widget.isInSelectionMode ? Colors.grey : Colors.red,
+                color:
+                    widget.isInSelectionMode
+                        ? Colors.grey
+                        : GlobalConst.redColor,
               ),
             ),
           ],
@@ -105,7 +112,7 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
 
     if (isSelected) {
       return Border.all(
-        color: Colors.black38, // Border color
+        color: Color(0xFF4A4AB5), // Border color
         width: 2.0, // Border width
       );
     }

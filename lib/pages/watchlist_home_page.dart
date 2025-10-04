@@ -3,6 +3,7 @@ import 'package:popcorn/pages/components/custom_bottom_sheet.dart';
 import 'package:popcorn/pages/components/entries_finished_window.dart';
 import 'package:popcorn/pages/components/entries_unfinished_window.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 import 'package:popcorn/widgets/custom_bottom_navigation_bar.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_create_dialog.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
@@ -22,16 +23,23 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
     return Consumer<WatchlistEntryProvider>(
       builder: (context, provider, child) {
         return Scaffold(
+          backgroundColor: Color(0xFF111129),
           appBar: AppBar(
+            iconTheme: IconThemeData(color: GlobalConst.whiteColor),
+            backgroundColor: Color(0xFF1D193A),
             title: provider.buildTitle(),
             actions: [
+              // Search Button
               IconButton(
                 onPressed: provider.toggleSearch,
                 icon: const Icon(Icons.search),
               ),
+
+              // Filter Button
               IconButton(
                 onPressed: () {
                   showModalBottomSheet(
+                    backgroundColor: Color(0xFF111129),
                     context: context,
                     builder: (context) => CustomBottomSheet(),
                   );
@@ -49,7 +57,7 @@ class _WatchlistHomePageState extends State<WatchlistHomePage> {
                         child: Container(
                           padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            color: Colors.red, // dot color
+                            color: GlobalConst.redColor, // dot color
                             shape: BoxShape.circle,
                           ),
                         ),

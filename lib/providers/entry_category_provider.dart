@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/database_services/entry_category_db_service.dart';
 import 'package:popcorn/models/entities/entry_category.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class EntryCategoryProvider extends ChangeNotifier {
   final pageTitle = "Categories";
@@ -27,10 +28,11 @@ class EntryCategoryProvider extends ChangeNotifier {
         controller: searchTextController,
         autofocus: true,
         onChanged: (value) => setSearchText(value),
-        style: TextStyle(fontSize: 18.0),
+        style: TextStyle(fontSize: 18.0, color: GlobalConst.whiteColor),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: searchToggleTitle,
+          hintStyle: TextStyle(fontSize: 18.0, color: GlobalConst.whiteColor),
           contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 12.0),
           suffixIcon:
               searchTextController.text.isEmpty
@@ -39,12 +41,21 @@ class EntryCategoryProvider extends ChangeNotifier {
                     onPressed: () {
                       clearSearch();
                     },
-                    icon: const Icon(Icons.clear),
+                    icon: const Icon(
+                      Icons.clear,
+                      color: GlobalConst.whiteColor,
+                    ),
                   ),
         ),
       );
     } else {
-      return Text(pageTitle);
+      return Text(
+        pageTitle,
+        style: TextStyle(
+          color: GlobalConst.whiteColor,
+          fontWeight: FontWeight.bold,
+        ),
+      );
     }
   }
 
