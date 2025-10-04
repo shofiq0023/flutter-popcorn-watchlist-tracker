@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 import 'package:popcorn/widgets/dialogs//watchlist/watchlist_entry_finished_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/watchlist_entry_detail_dialog.dart';
@@ -51,7 +52,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
         clipBehavior: Clip.antiAlias,
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: GlobalConst.dialogBoxBg,
           border: getBorderForSelectionMode(),
           borderRadius: BorderRadius.circular(5.0),
           boxShadow: const <BoxShadow>[
@@ -87,7 +88,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                             Text(
                               widget.watchlistEntry.title,
                               style: TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFFF0F0F0),
                                 fontSize: 20.0,
                                 fontVariations: const <FontVariation>[
                                   FontVariation('wght', 700.0),
@@ -103,7 +104,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                                       .target!
                                       .categoryName,
                               style: TextStyle(
-                                color: Colors.black38,
+                                color: Color(0x80F0F0F0),
                                 fontSize: 10.0,
                                 fontVariations: const <FontVariation>[
                                   FontVariation('wght', 100.0),
@@ -137,7 +138,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                             color:
                                 widget.isInSelectionMode
                                     ? Colors.grey
-                                    : Colors.red,
+                                    : GlobalConst.redColor,
                             size: 28.0,
                           ),
                         )
@@ -160,7 +161,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                             color:
                                 widget.isInSelectionMode
                                     ? Colors.grey
-                                    : Colors.green,
+                                    : GlobalConst.greenColor,
                             size: 28.0,
                           ),
                         ),
@@ -189,9 +190,9 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
     int entryPriority = widget.watchlistEntry.priority;
 
     if (entryPriority == 1) {
-      return Colors.red[700];
+      return GlobalConst.highPriorityColor;
     } else if (entryPriority == 2) {
-      return Colors.red[400];
+      return GlobalConst.mediumPriorityColor;
     }
 
     return Colors.transparent;
@@ -202,7 +203,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
 
     if (isSelected) {
       return Border.all(
-        color: Colors.black38, // Border color
+        color: Color(0xFF4A4AB5), // Border color
         width: 2.0, // Border width
       );
     }

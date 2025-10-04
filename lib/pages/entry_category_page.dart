@@ -5,6 +5,7 @@ import 'package:popcorn/widgets/dialogs/entry_category/entry_category_create_dia
 import 'package:popcorn/widgets/entry_category_selection_mode_bot_nav.dart';
 import 'package:popcorn/widgets/navigation_drawer.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class EntryCategoryPage extends StatefulWidget {
   const EntryCategoryPage({super.key});
@@ -19,9 +20,13 @@ class _EntryCategoryPageState extends State<EntryCategoryPage> {
     return Consumer<EntryCategoryProvider>(
       builder: (context, provider, child) {
         return Scaffold(
+          backgroundColor: Color(0xFF111129),
           appBar: AppBar(
+            iconTheme: IconThemeData(color: GlobalConst.whiteColor),
+            backgroundColor: Color(0xFF1D193A),
             title: provider.buildTitle(),
             actions: [
+              // Search Button
               IconButton(
                 onPressed: provider.toggleSearch,
                 icon: const Icon(Icons.search),

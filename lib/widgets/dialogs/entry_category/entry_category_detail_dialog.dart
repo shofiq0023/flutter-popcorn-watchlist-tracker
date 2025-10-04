@@ -4,19 +4,25 @@ import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class EntryCategoryDetailDialog extends StatefulWidget {
   final EntryCategory entryCategory;
+
   const EntryCategoryDetailDialog({super.key, required this.entryCategory});
 
   @override
-  State<EntryCategoryDetailDialog> createState() => _EntryCategoryDetailDialogState();
+  State<EntryCategoryDetailDialog> createState() =>
+      _EntryCategoryDetailDialogState();
 }
 
 class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
-  final TextEditingController _entryCategoryNameTextController = TextEditingController();
-  final TextEditingController _entryCategoryCreationDateController = TextEditingController();
-  final TextEditingController _entryCategoryUpdateDateController = TextEditingController();
+  final TextEditingController _entryCategoryNameTextController =
+      TextEditingController();
+  final TextEditingController _entryCategoryCreationDateController =
+      TextEditingController();
+  final TextEditingController _entryCategoryUpdateDateController =
+      TextEditingController();
 
   bool _nameError = false;
 
@@ -25,8 +31,12 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
     EntryCategory entry = widget.entryCategory;
     _entryCategoryNameTextController.text = entry.categoryName;
 
-    _entryCategoryCreationDateController.text = Utils.dateTimeToStrDateWithTime(entry.createdAt);
-    _entryCategoryUpdateDateController.text = Utils.dateTimeToStrDateWithTime(entry.updatedAt);
+    _entryCategoryCreationDateController.text = Utils.dateTimeToStrDateWithTime(
+      entry.createdAt,
+    );
+    _entryCategoryUpdateDateController.text = Utils.dateTimeToStrDateWithTime(
+      entry.updatedAt,
+    );
 
     super.initState();
   }
@@ -34,7 +44,11 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Update category"),
+      title: const Text(
+        "Update category",
+        style: TextStyle(color: GlobalConst.whiteColor),
+      ),
+      backgroundColor: GlobalConst.dialogBoxBg,
       content: SizedBox(
         width: 600,
         child: Column(
@@ -44,18 +58,23 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
             TextField(
               controller: _entryCategoryNameTextController,
               textCapitalization: TextCapitalization.words,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: GlobalConst.whiteColor),
               decoration: InputDecoration(
                 error:
-                _nameError
-                    ? const Text(
-                  "Please enter a name!",
-                  style: TextStyle(color: Colors.redAccent),
-                )
-                    : null,
+                    _nameError
+                        ? const Text(
+                          "Please enter a name!",
+                          style: TextStyle(color: Colors.redAccent),
+                        )
+                        : null,
                 label: Text(
                   "Category name",
-                  style: TextStyle(fontSize: 16.0),
+                  style: TextStyle(fontSize: 16.0, color: Color(0xFFCAC1FF)),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: GlobalConst.whiteColor,
+                  ), // Normal state
                 ),
               ),
               onChanged: (value) {
@@ -75,11 +94,13 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
 
             /// Entry creation date
             TextField(
+              style: const TextStyle(color: GlobalConst.whiteColor),
               controller: _entryCategoryCreationDateController,
               readOnly: true, // Prevent manual typing
               decoration: InputDecoration(
-                  labelText: "Created at",
-                  border: InputBorder.none
+                labelStyle: TextStyle(color: GlobalConst.whiteColor),
+                labelText: "Created at",
+                border: InputBorder.none,
               ),
             ),
 
@@ -87,11 +108,13 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
             Visibility(
               visible: _entryCategoryUpdateDateController.text.isNotEmpty,
               child: TextField(
+                style: const TextStyle(color: GlobalConst.whiteColor),
                 controller: _entryCategoryUpdateDateController,
                 readOnly: true, // Prevent manual typing
                 decoration: InputDecoration(
-                    labelText: "Last updated at",
-                    border: InputBorder.none
+                  labelStyle: TextStyle(color: GlobalConst.whiteColor),
+                  labelText: "Last updated at",
+                  border: InputBorder.none,
                 ),
               ),
             ),
@@ -105,7 +128,7 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
           children: [
             /// Close button
             MaterialButton(
-              child: const Text("CLOSE"),
+              child: const Text("CLOSE", style: TextStyle(color: GlobalConst.whiteColor),),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -116,13 +139,13 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
               builder: (context, provider, child) {
                 return MaterialButton(
                   onPressed:
-                  isSubmittable()
-                      ? () => _updateEntryCategory(provider, context)
-                      : null,
+                      isSubmittable()
+                          ? () => _updateEntryCategory(provider, context)
+                          : null,
                   child: Text(
                     "UPDATE",
                     style: TextStyle(
-                      color: isSubmittable() ? Colors.green : Colors.grey,
+                      color: isSubmittable() ? GlobalConst.greenColor : Colors.grey,
                     ),
                   ),
                 );
@@ -135,7 +158,10 @@ class _EntryCategoryDetailDialogState extends State<EntryCategoryDetailDialog> {
   }
 
   /// Update entry category
-  void _updateEntryCategory(EntryCategoryProvider provider, BuildContext context) {
+  void _updateEntryCategory(
+    EntryCategoryProvider provider,
+    BuildContext context,
+  ) {
     EntryCategory category = widget.entryCategory;
     category.categoryName = _entryCategoryNameTextController.text;
 

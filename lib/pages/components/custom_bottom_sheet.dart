@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class CustomBottomSheet extends StatefulWidget {
   const CustomBottomSheet({super.key});
@@ -23,15 +24,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
     {'title_desc': 'Title (Z-A)'},
     {'date_desc': 'Creation Date (New to Old)'},
     {'date_asc': 'Creation Date (Old to New)'},
-  ];
-
-  final List<String> multiSelectItems = [
-    'Option A',
-    'Option B',
-    'Option C',
-    'Option D',
-    'Option E',
-    'Option F',
   ];
 
   @override
@@ -59,10 +51,30 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
 
           // Title
           Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Sort & Filter',
-              style: Theme.of(context).textTheme.headlineSmall,
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 28),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Sort & Filter',
+                  style: TextStyle(fontSize: 28, color: GlobalConst.whiteColor),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Provider.of<WatchlistEntryProvider>(
+                      context,
+                      listen: false,
+                    ).clearSortingAndFilter();
+                  },
+                  child: Text(
+                    'Reset',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: GlobalConst.greenColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -103,21 +115,27 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
             );
 
             return Card(
-              color: isSelected ? Colors.blue.shade50 : null,
+              color: isSelected ? GlobalConst.dialogBoxBg : Color(0xFF1D193A),
               elevation: isSelected ? 3 : 1,
               child: ListTile(
                 title: Text(
                   value,
                   style: TextStyle(
-                    color: isSelected ? Colors.blue.shade700 : null,
+                    color:
+                        isSelected
+                            ? Colors.blue.shade700
+                            : GlobalConst.whiteColor,
                     fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
                 trailing: Icon(
                   isSelected ? Icons.check : Icons.arrow_forward_ios,
                   size: 16,
-                  color: isSelected ? Colors.blue.shade700 : null,
+                  color:
+                      isSelected
+                          ? Colors.blue.shade700
+                          : GlobalConst.whiteColor,
                 ),
                 onTap: () {
                   watchlistProvider.sortWatchlist(key);
@@ -143,11 +161,17 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
           itemCount: entryCategoryProvider.filterOptions.length,
           itemBuilder: (context, index) {
             final item = entryCategoryProvider.filterOptions[index];
-            final isSelected = watchlistProvider.selectedFilterOptionsContains(item);
+            final isSelected = watchlistProvider.selectedFilterOptionsContains(
+              item,
+            );
 
             return Card(
+              color: Color(0xFF1D193A),
               child: CheckboxListTile(
-                title: Text(item),
+                title: Text(
+                  item,
+                  style: TextStyle(color: GlobalConst.whiteColor),
+                ),
                 value: isSelected,
                 onChanged: (bool? value) {
                   if (value == true) {
@@ -156,6 +180,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                     watchlistProvider.removeFromFilterOption(item);
                   }
                 },
+                activeColor: Color(0xFF7C3AED), // Checked color
+                checkColor: GlobalConst.whiteColor, // Checkmark color
               ),
             );
           },

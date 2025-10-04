@@ -3,6 +3,7 @@ import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 import 'package:popcorn/utils/toast_helper.dart';
 import 'package:popcorn/utils/utils.dart';
 import 'package:popcorn/widgets/dialogs/watchlist/delete_confirmation_dialog.dart';
@@ -10,18 +11,25 @@ import 'package:provider/provider.dart';
 
 class WatchlistEntryDetailDialog extends StatefulWidget {
   final WatchlistEntry watchlistEntry;
+
   const WatchlistEntryDetailDialog({super.key, required this.watchlistEntry});
 
   @override
-  State<WatchlistEntryDetailDialog> createState() => _WatchlistEntryDetailDialogState();
+  State<WatchlistEntryDetailDialog> createState() =>
+      _WatchlistEntryDetailDialogState();
 }
 
-class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog> {
+class _WatchlistEntryDetailDialogState
+    extends State<WatchlistEntryDetailDialog> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _estimatedReleaseDateController = TextEditingController();
-  final TextEditingController _entryFinishedDateController = TextEditingController();
-  final TextEditingController _entryCreationDateController = TextEditingController();
-  final TextEditingController _entryUpdateDateController = TextEditingController();
+  final TextEditingController _estimatedReleaseDateController =
+      TextEditingController();
+  final TextEditingController _entryFinishedDateController =
+      TextEditingController();
+  final TextEditingController _entryCreationDateController =
+      TextEditingController();
+  final TextEditingController _entryUpdateDateController =
+      TextEditingController();
 
   bool _titleError = false;
   bool _isUpcomingEntry = false;
@@ -40,12 +48,20 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     _isEntryFinished = entry.isFinished;
 
     _isUpcomingEntry = entry.isUpcoming;
-    _estimatedReleaseDateController.text = Utils.dateTimeToStrDate(entry.estimatedReleaseDate);
+    _estimatedReleaseDateController.text = Utils.dateTimeToStrDate(
+      entry.estimatedReleaseDate,
+    );
 
-    _entryFinishedDateController.text = Utils.dateTimeToStrDate(entry.finishedAt);
+    _entryFinishedDateController.text = Utils.dateTimeToStrDate(
+      entry.finishedAt,
+    );
 
-    _entryCreationDateController.text = Utils.dateTimeToStrDateWithTime(entry.createdAt);
-    _entryUpdateDateController.text = Utils.dateTimeToStrDateWithTime(entry.updatedAt);
+    _entryCreationDateController.text = Utils.dateTimeToStrDateWithTime(
+      entry.createdAt,
+    );
+    _entryUpdateDateController.text = Utils.dateTimeToStrDateWithTime(
+      entry.updatedAt,
+    );
 
     super.initState();
   }
@@ -53,7 +69,11 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Details of the entry"),
+      title: const Text(
+        "Details of the entry",
+        style: TextStyle(color: GlobalConst.whiteColor),
+      ),
+      backgroundColor: GlobalConst.dialogBoxBg,
       content: SizedBox(
         width: 600,
         child: SingleChildScrollView(
@@ -64,18 +84,23 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
               TextField(
                 controller: _titleController,
                 textCapitalization: TextCapitalization.words,
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(color: GlobalConst.whiteColor),
                 decoration: InputDecoration(
                   error:
-                  _titleError
-                      ? const Text(
-                    "Please enter a title!",
-                    style: TextStyle(color: Colors.redAccent),
-                  )
-                      : null,
+                      _titleError
+                          ? const Text(
+                            "Please enter a title!",
+                            style: TextStyle(color: GlobalConst.redColor),
+                          )
+                          : null,
                   label: Text(
                     "Title of the entry",
-                    style: TextStyle(fontSize: 16.0),
+                    style: TextStyle(fontSize: 16.0, color: Color(0xFFCAC1FF)),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: GlobalConst.whiteColor,
+                    ), // Normal state
                   ),
                 ),
                 onChanged: (value) {
@@ -90,17 +115,17 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                   }
                 },
               ),
-          
+
               /// For spacing
               const SizedBox(height: 10.0),
 
               /// Dropdown for type of the show
               FutureBuilder<List<EntryCategory>>(
                 future:
-                Provider.of<EntryCategoryProvider>(
-                  context,
-                  listen: false,
-                ).categoryList,
+                    Provider.of<EntryCategoryProvider>(
+                      context,
+                      listen: false,
+                    ).categoryList,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const CircularProgressIndicator();
@@ -112,14 +137,21 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                   EntryCategory? currentValue;
 
                   try {
-                    currentValue = _selectedCategory == null
-                        ? null
-                        : categories.firstWhere((cat) => cat.id == _selectedCategory!.id);
+                    currentValue =
+                        _selectedCategory == null
+                            ? null
+                            : categories.firstWhere(
+                              (cat) => cat.id == _selectedCategory!.id,
+                            );
                   } catch (e) {
                     currentValue = null;
                   }
 
                   return DropdownButton<EntryCategory>(
+                    style: TextStyle(color: GlobalConst.whiteColor, fontSize: 16),
+                    iconEnabledColor: GlobalConst.whiteColor,
+                    underline: Container(height: 1, color: GlobalConst.whiteColor),
+                    dropdownColor: Color(0xFF090812),
                     value: currentValue,
                     isExpanded: true,
                     hint: const Text("Select entry category"),
@@ -127,21 +159,25 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                       setState(() => _selectedCategory = category);
                     },
                     items:
-                    categories.map((c) {
-                      return DropdownMenuItem<EntryCategory>(
-                        value: c,
-                        child: Text(c.categoryName),
-                      );
-                    }).toList(),
+                        categories.map((c) {
+                          return DropdownMenuItem<EntryCategory>(
+                            value: c,
+                            child: Text(c.categoryName),
+                          );
+                        }).toList(),
                   );
                 },
               ),
-          
+
               /// For spacing
               const SizedBox(height: 10.0),
-          
+
               /// Dropdown for priority of the show
               DropdownButton<int>(
+                style: TextStyle(color: GlobalConst.whiteColor, fontSize: 16),
+                iconEnabledColor: GlobalConst.whiteColor,
+                underline: Container(height: 1, color: GlobalConst.whiteColor),
+                dropdownColor: Color(0xFF090812),
                 value: _selectedPriority,
                 isExpanded: true,
                 hint: const Text("Select priority of the entry"),
@@ -153,7 +189,10 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
 
               /// isFinished entry checkbox
               CheckboxListTile(
-                title: Text("Finished"),
+                title: Text(
+                  "Finished",
+                  style: TextStyle(color: GlobalConst.whiteColor),
+                ),
                 value: _isEntryFinished,
                 onChanged: (bool? newValue) {
                   setState(() {
@@ -162,11 +201,19 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
+                checkColor: GlobalConst.whiteColor,
+                side: BorderSide(
+                  color: GlobalConst.whiteColor, // Border color when unchecked
+                  width: 2,
+                ),
               ),
-          
+
               /// Recommendable entry checkbox
               CheckboxListTile(
-                title: Text("Recommendable"),
+                title: Text(
+                  "Recommendable",
+                  style: TextStyle(color: GlobalConst.whiteColor),
+                ),
                 value: _isEntryRecommendable,
                 onChanged: (bool? newValue) {
                   setState(() {
@@ -175,11 +222,20 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
+                checkColor: GlobalConst.whiteColor,
+                // Checkmark color
+                side: BorderSide(
+                  color: GlobalConst.whiteColor, // Border color when unchecked
+                  width: 2,
+                ),
               ),
-          
+
               /// Upcoming entry checkbox
               CheckboxListTile(
-                title: Text("Upcoming"),
+                title: Text(
+                  "Upcoming",
+                  style: TextStyle(color: GlobalConst.whiteColor),
+                ),
                 value: _isUpcomingEntry,
                 onChanged: (bool? newValue) {
                   setState(() {
@@ -188,61 +244,81 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
+                checkColor: GlobalConst.whiteColor,
+                // Checkmark color
+                side: BorderSide(
+                  color: GlobalConst.whiteColor, // Border color when unchecked
+                  width: 2,
+                ),
               ),
-          
+
               /// Estimated release date based on upcoming status
               Visibility(
                 visible: _isUpcomingEntry,
                 child: TextField(
+                  style: const TextStyle(color: GlobalConst.whiteColor),
                   controller: _estimatedReleaseDateController,
-                  readOnly: true, // Prevent manual typing
+                  readOnly: true,
+                  // Prevent manual typing
                   decoration: InputDecoration(
                     labelText: "Estimated release date",
-                    suffixIcon: Icon(Icons.calendar_month_rounded),
+                    labelStyle: TextStyle(color: GlobalConst.whiteColor),
+                    suffixIcon: Icon(
+                      Icons.calendar_month_rounded,
+                      color: GlobalConst.whiteColor,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: GlobalConst.whiteColor),
+                    ),
                   ),
                   onTap: () => _selectDate(context), // Show date picker on tap
                 ),
               ),
-          
+
               /// For spacing
               const SizedBox(height: 25.0),
-          
+
               /// Entry finished date
               Visibility(
                 visible: _isEntryFinished,
                 child: TextField(
+                  style: const TextStyle(color: GlobalConst.whiteColor),
                   controller: _entryFinishedDateController,
                   readOnly: true, // Prevent manual typing
                   decoration: InputDecoration(
-                      labelText: "Finished date",
-                      border: InputBorder.none
+                    labelStyle: TextStyle(color: GlobalConst.whiteColor),
+                    labelText: "Finished date",
+                    border: InputBorder.none,
                   ),
                 ),
               ),
-          
+
               /// Entry creation date
               TextField(
+                style: const TextStyle(color: GlobalConst.whiteColor),
                 controller: _entryCreationDateController,
                 readOnly: true, // Prevent manual typing
                 decoration: InputDecoration(
-                    labelText: "Created at",
-                    border: InputBorder.none
+                  labelStyle: TextStyle(color: GlobalConst.whiteColor),
+                  labelText: "Created at",
+                  border: InputBorder.none,
                 ),
               ),
-          
+
               /// Entry update date
               Visibility(
                 visible: _entryUpdateDateController.text.isNotEmpty,
                 child: TextField(
                   controller: _entryUpdateDateController,
+                  style: const TextStyle(color: GlobalConst.whiteColor),
                   readOnly: true, // Prevent manual typing
                   decoration: InputDecoration(
+                    labelStyle: TextStyle(color: GlobalConst.whiteColor),
                     labelText: "Last updated at",
-                    border: InputBorder.none
+                    border: InputBorder.none,
                   ),
                 ),
               ),
-          
             ],
           ),
         ),
@@ -252,14 +328,6 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            /// Close button
-            MaterialButton(
-              child: const Text("CLOSE"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-
             /// Update button
             Consumer<WatchlistEntryProvider>(
               builder: (context, provider, child) {
@@ -269,9 +337,7 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
                   },
                   child: Text(
                     "DELETE",
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                    ),
+                    style: TextStyle(color: GlobalConst.redColor),
                   ),
                 );
               },
@@ -280,13 +346,13 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
               builder: (context, provider, child) {
                 return MaterialButton(
                   onPressed:
-                  isSubmittable()
-                      ? () => _updateWatchlistEntry(provider, context)
-                      : null,
+                      isSubmittable()
+                          ? () => _updateWatchlistEntry(provider, context)
+                          : null,
                   child: Text(
                     "UPDATE",
                     style: TextStyle(
-                      color: isSubmittable() ? Colors.green : Colors.grey,
+                      color: isSubmittable() ? GlobalConst.greenColor : Colors.grey,
                     ),
                   ),
                 );
@@ -299,7 +365,10 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   }
 
   /// Add a new entry to the database
-  void _updateWatchlistEntry(WatchlistEntryProvider provider, BuildContext context) {
+  void _updateWatchlistEntry(
+    WatchlistEntryProvider provider,
+    BuildContext context,
+  ) {
     WatchlistEntry entry = widget.watchlistEntry;
     entry.title = _titleController.text;
     entry.category.target = _selectedCategory!;
@@ -308,7 +377,10 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
     entry.isRecommendable = _isEntryRecommendable;
 
     entry.isUpcoming = _isUpcomingEntry;
-    entry.estimatedReleaseDate = _isUpcomingEntry ? Utils.strDateToDateTime(_estimatedReleaseDateController.text) : null;
+    entry.estimatedReleaseDate =
+        _isUpcomingEntry
+            ? Utils.strDateToDateTime(_estimatedReleaseDateController.text)
+            : null;
 
     provider.update(entry);
     ToastHelper.showSuccessToast("Successfully updated entry");
@@ -316,12 +388,15 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
   }
 
   /// Delete the current entry
-  void _deleteWatchlistEntry(WatchlistEntryProvider provider, BuildContext context) {
+  void _deleteWatchlistEntry(
+    WatchlistEntryProvider provider,
+    BuildContext context,
+  ) {
     showDialog(
       context: context,
-      builder: (context) => DeleteConfirmationDialog(
-        watchlistEntry: widget.watchlistEntry,
-      ),
+      builder:
+          (context) =>
+              DeleteConfirmationDialog(watchlistEntry: widget.watchlistEntry),
     );
   }
 
@@ -352,5 +427,4 @@ class _WatchlistEntryDetailDialogState extends State<WatchlistEntryDetailDialog>
       return false;
     }
   }
-
 }

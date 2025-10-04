@@ -1,28 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn/database_services/watchlist_entry_db_service.dart';
 import 'package:popcorn/models/entities/watchlist_entry.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class WatchlistEntryProvider extends ChangeNotifier {
+  late WatchlistEntryDatabaseService db;
+
+  // For building dynamic title
   final homePageTitle = "Watch list";
   final searchToggleTitle = "Search...";
   final searchTextController = TextEditingController();
-
-  int _pageIndex = 0;
-  late WatchlistEntryDatabaseService db;
   bool _isSearching = false;
+
+  // For selection mode toggle
   bool _isSelectionMode = false;
 
+  // For tracking unfinished and finished tab index
+  int _pageIndex = 0;
+
+  // Storing the watchlist
   List<WatchlistEntry> _allWatchList = [];
   List<WatchlistEntry> _unfinishedWatchList = [];
   List<WatchlistEntry> _finishedWatchList = [];
-  Map<int, int> selectedEntries = {};
-  String _currentSortType = 'default';
 
+  // Indicating the selecting watchlist entry
+  Map<int, int> selectedEntries = {};
+
+  String _currentSortType = 'default';
   final Set<String> _selectedFilterOptions = {};
 
+  // =============================== FUNCTIONS =================================
+
+  // ===========> CONSTRUCTOR
   WatchlistEntryProvider() {
     db = WatchlistEntryDatabaseService();
     loadAllEntry();
+  }
+
+  Future<void> loadAllEntry() async {
+    _allWatchList = await db.getAll();
+    _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
+    _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
+    notifyListeners();
+  }
+
+  // ==========> GETTERS
+  int get pageIndex {
+    return _pageIndex;
+  }
+
+  Set<String> get selectedFilterOptions => _selectedFilterOptions;
+
+  String get currentSortType => _currentSortType;
+
+  Future<List<WatchlistEntry>> get watchList async {
+    loadAllEntry();
+    String searchText = searchTextController.text.toLowerCase();
+
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
+    }
+
+    List<WatchlistEntry> filteredWatchList =
+        _unfinishedWatchList
+            .where((w) => w.title.toLowerCase().contains(searchText))
+            .toList();
+
+    filteredWatchList = filterWatchList(filteredWatchList);
+
+    return filteredWatchList;
+  }
+
+  Future<List<WatchlistEntry>> get finishedWatchList async {
+    loadAllEntry();
+    String searchText = searchTextController.text.toLowerCase();
+
+    // Apply current sorting after loading
+    if (_currentSortType != 'default') {
+      sortWatchlist(_currentSortType);
+    }
+
+    List<WatchlistEntry> filteredWatchList =
+        _finishedWatchList
+            .where((w) => w.title.toLowerCase().contains(searchText))
+            .toList();
+
+    filteredWatchList = filterWatchList(filteredWatchList);
+
+    return filteredWatchList;
+  }
+
+  int entryCount() {
+    return _unfinishedWatchList.length;
+  }
+
+  bool get isSelectionMode => _isSelectionMode;
+
+  WatchlistEntry _getEntryById(int id) {
+    return _allWatchList.firstWhere((e) => e.id == id);
   }
 
   void setPageIndex(int index) {
@@ -30,21 +106,18 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int get pageIndex {
-    return _pageIndex;
-  }
-
-  /// Build dynamic AppTitle bar
+  // ==========> FUNCTION FOR BUILDING A DYNAMIC TITLE BAR
   Widget buildTitle() {
     if (_isSearching) {
       return TextField(
         controller: searchTextController,
         autofocus: true,
         onChanged: (value) => setSearchText(value),
-        style: TextStyle(fontSize: 18.0),
+        style: TextStyle(fontSize: 18.0, color: GlobalConst.whiteColor),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: searchToggleTitle,
+          hintStyle: TextStyle(fontSize: 18.0, color: GlobalConst.whiteColor),
           contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 12.0),
           suffixIcon:
               searchTextController.text.isEmpty
@@ -53,12 +126,15 @@ class WatchlistEntryProvider extends ChangeNotifier {
                     onPressed: () {
                       clearSearch();
                     },
-                    icon: const Icon(Icons.clear),
+                    icon: const Icon(Icons.clear, color: GlobalConst.whiteColor),
                   ),
         ),
       );
     } else {
-      return Text(homePageTitle);
+      return Text(
+        homePageTitle,
+        style: TextStyle(color: GlobalConst.whiteColor, fontWeight: FontWeight.bold),
+      );
     }
   }
 
@@ -80,68 +156,21 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadAllEntry() async {
-    _allWatchList = await db.getAll();
-    _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
-    _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
-    notifyListeners();
-  }
-
-  String get currentSortType => _currentSortType;
-
-  /// Get watch list
-  Future<List<WatchlistEntry>> get watchList async {
-    loadAllEntry();
-    String searchText = searchTextController.text.toLowerCase();
-
-    // Apply current sorting after loading
-    if (_currentSortType != 'default') {
-      sortWatchlist(_currentSortType);
-    }
-
-    List<WatchlistEntry> filteredWatchList =
-        _unfinishedWatchList
-            .where((w) => w.title.toLowerCase().contains(searchText))
-            .toList();
-
-    filteredWatchList = filterWatchList(filteredWatchList);
-
-    return filteredWatchList;
-  }
-
-  /// Get finished watch list
-  Future<List<WatchlistEntry>> get finishedWatchList async {
-    loadAllEntry();
-    String searchText = searchTextController.text.toLowerCase();
-
-    // Apply current sorting after loading
-    if (_currentSortType != 'default') {
-      sortWatchlist(_currentSortType);
-    }
-
-    List<WatchlistEntry> filteredWatchList =
-        _finishedWatchList
-            .where((w) => w.title.toLowerCase().contains(searchText))
-            .toList();
-
-    filteredWatchList = filterWatchList(filteredWatchList);
-
-    return filteredWatchList;
-  }
-
+  // ==========> FILTERING AND SORTING RELATED FUNCTIONS
   List<WatchlistEntry> filterWatchList(List<WatchlistEntry> watchList) {
     if (_selectedFilterOptions.isEmpty) {
       return watchList;
     }
 
-    const String recommended = "Recommended";
-    const String upcoming = "Upcoming";
+    const String recommended = GlobalConst.RECOMMENDABLE;
+    const String upcoming = GlobalConst.UPCOMING;
 
     final bool hasRecommended = _selectedFilterOptions.contains(recommended);
     final bool hasUpcoming = _selectedFilterOptions.contains(upcoming);
-    final Set<String> categories = _selectedFilterOptions
-        .where((o) => o != recommended && o != upcoming)
-        .toSet();
+    final Set<String> categories =
+        _selectedFilterOptions
+            .where((o) => o != recommended && o != upcoming)
+            .toSet();
 
     return watchList.where((w) {
       // Check if entry passes the recommended filter (if applicable)
@@ -174,10 +203,66 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearSortingAndFilter() {
+    sortWatchlist("default");
+    _selectedFilterOptions.clear();
+    notifyListeners();
+  }
+
   bool selectedFilterOptionsContains(String item) {
     return _selectedFilterOptions.contains(item);
   }
 
+  void sortWatchlist(String sortType) {
+    _currentSortType = sortType;
+
+    switch (sortType) {
+      case 'title_asc':
+        _unfinishedWatchList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+        _finishedWatchList.sort(
+          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+        );
+        break;
+
+      case 'title_desc':
+        _unfinishedWatchList.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        _finishedWatchList.sort(
+          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+        );
+        break;
+
+      case 'date_asc':
+        _unfinishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        _finishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        break;
+
+      case 'date_desc':
+        _unfinishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        _finishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+
+      case 'priority_desc':
+        _unfinishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
+        _finishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
+        break;
+
+      case 'default':
+        _unfinishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
+        _finishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
+        break;
+
+      default:
+        break;
+    }
+
+    notifyListeners();
+  }
+
+  // ==========> DATABASE RELATED FUNCTIONS
   Future<void> add(WatchlistEntry entity) async {
     await db.add(entity);
     notifyListeners();
@@ -198,12 +283,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int entryCount() {
-    return _unfinishedWatchList.length;
-  }
-
-  bool get isSelectionMode => _isSelectionMode;
-
+  // ==========> SELECTION MODE RELATED FUNCTIONS
   void enableSelectionMode() {
     _isSelectionMode = true;
     notifyListeners();
@@ -272,10 +352,6 @@ class WatchlistEntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  WatchlistEntry _getEntryById(int id) {
-    return _allWatchList.firstWhere((e) => e.id == id);
-  }
-
   void deleteSelectedEntries() {
     for (int entryId in selectedEntries.keys) {
       WatchlistEntry entry = _getEntryById(entryId);
@@ -283,55 +359,6 @@ class WatchlistEntryProvider extends ChangeNotifier {
     }
 
     disableSelectionMode();
-    notifyListeners();
-  }
-
-  void sortWatchlist(String sortType) {
-    _currentSortType = sortType;
-
-    switch (sortType) {
-      case 'title_asc':
-        _unfinishedWatchList.sort(
-          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-        );
-        _finishedWatchList.sort(
-          (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-        );
-        break;
-
-      case 'title_desc':
-        _unfinishedWatchList.sort(
-          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
-        );
-        _finishedWatchList.sort(
-          (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
-        );
-        break;
-
-      case 'date_asc':
-        _unfinishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-        _finishedWatchList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-        break;
-
-      case 'date_desc':
-        _unfinishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        _finishedWatchList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        break;
-
-      case 'priority_desc':
-        _unfinishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
-        _finishedWatchList.sort((a, b) => b.priority.compareTo(a.priority));
-        break;
-
-      case 'default':
-        _unfinishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
-        _finishedWatchList.sort((a, b) => a.priority.compareTo(b.priority));
-        break;
-
-      default:
-        break;
-    }
-
     notifyListeners();
   }
 }

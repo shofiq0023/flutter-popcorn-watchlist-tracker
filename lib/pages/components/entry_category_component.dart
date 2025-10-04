@@ -3,6 +3,7 @@ import 'package:popcorn/models/entities/entry_category.dart';
 import 'package:popcorn/providers/entry_category_provider.dart';
 import 'package:popcorn/widgets/entry_category_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class EntryCategoryComponent extends StatefulWidget {
   const EntryCategoryComponent({super.key});
@@ -20,9 +21,9 @@ class _EntryCategoryComponentState extends State<EntryCategoryComponent> {
           future: provider.categoryList,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: GlobalConst.whiteColor)));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No categories found'));
+              return Center(child: Text('No categories found', style: TextStyle(color: GlobalConst.whiteColor)));
             }
 
             final entries = snapshot.data!;

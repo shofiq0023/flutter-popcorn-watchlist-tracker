@@ -4,6 +4,7 @@ import 'package:popcorn/providers/user_preferences_provider.dart';
 import 'package:popcorn/providers/watchlist_entry_provider.dart';
 import 'package:popcorn/widgets/dialogs/user_preferences/username_create_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:popcorn/utils/global_const.dart';
 
 class MyNavigationDrawer extends StatelessWidget {
   const MyNavigationDrawer({super.key});
@@ -13,19 +14,20 @@ class MyNavigationDrawer extends StatelessWidget {
     final currentRoute = ModalRoute.of(context)?.settings.name;
 
     return Drawer(
+      backgroundColor: Color(0xFF1D193A),
       child: SafeArea(
         child: Column(
           children: [
             // Profile Section
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 30.0),
               child: Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Hello There', style: TextStyle(fontSize: 14)),
+                        Text('Hello There,', style: TextStyle(fontSize: 16, color: GlobalConst.whiteColor)),
                         SizedBox(height: 4),
                         Consumer<UserPreferencesProvider>(
                           builder: (context, userPreferences, child) {
@@ -48,8 +50,9 @@ class MyNavigationDrawer extends StatelessWidget {
                                     child: Text(
                                       snapshot.data ?? '',
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 32,
                                         fontWeight: FontWeight.bold,
+                                        color: GlobalConst.whiteColor
                                       ),
                                     ),
                                   );
@@ -64,7 +67,6 @@ class MyNavigationDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(),
 
             // Multiple Providers here using Consumer2
             Expanded(
@@ -76,7 +78,7 @@ class MyNavigationDrawer extends StatelessWidget {
                       _buildDrawerItem(
                         context: context,
                         icon: Icons.list_alt,
-                        title: 'List',
+                        title: 'Watch List',
                         badgeCount: watchlistProvider.entryCount(),
                         selected: currentRoute == '/home',
                         routeTo: '/home',
@@ -102,15 +104,6 @@ class MyNavigationDrawer extends StatelessWidget {
                         selected: currentRoute == '/import-export',
                         routeTo: '/import-export',
                       ),
-
-                      // Settings page
-                      _buildDrawerItem(
-                        context: context,
-                        icon: Icons.settings,
-                        title: 'Settings',
-                        selected: currentRoute == '/settings',
-                        routeTo: '/settings',
-                      ),
                     ],
                   );
                 },
@@ -134,18 +127,18 @@ class MyNavigationDrawer extends StatelessWidget {
     return Container(
       color:
           selected
-              ? const Color(0xFF6C63FF).withValues(alpha: 0.2)
+              ? GlobalConst.whiteColor.withValues(alpha: 0.9)
               : Colors.transparent,
       child: ListTile(
         leading: Icon(
           icon,
-          color: selected ? const Color(0xFF6C63FF) : Colors.black,
+          color: selected ? const Color(0xFF090812) : GlobalConst.whiteColor,
         ),
         title: Text(
           title,
           style: TextStyle(
             fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-            color: selected ? const Color(0xFF6C63FF) : Colors.black,
+            color: selected ? Color(0xFF090812) : GlobalConst.whiteColor,
           ),
         ),
         trailing:
