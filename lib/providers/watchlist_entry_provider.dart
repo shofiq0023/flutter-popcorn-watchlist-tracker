@@ -162,8 +162,8 @@ class WatchlistEntryProvider extends ChangeNotifier {
       return watchList;
     }
 
-    const String recommended = "Recommended";
-    const String upcoming = "Upcoming";
+    const String recommended = GlobalConst.RECOMMENDABLE;
+    const String upcoming = GlobalConst.UPCOMING;
 
     final bool hasRecommended = _selectedFilterOptions.contains(recommended);
     final bool hasUpcoming = _selectedFilterOptions.contains(upcoming);

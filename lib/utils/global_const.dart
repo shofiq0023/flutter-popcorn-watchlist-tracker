@@ -12,4 +12,7 @@ class GlobalConst {
 
   static const Color highPriorityColor = Color(0xFFE53935);
   static const Color mediumPriorityColor = Color(0xFFFB8C00);
+
+  static const String RECOMMENDABLE = "Recommendable";
+  static const String UPCOMING = "Upcoming";
 }
