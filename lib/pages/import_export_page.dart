@@ -97,10 +97,10 @@ class _ImportExportPageState extends State<ImportExportPage> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Color(0xFF1D193A).withOpacity(0.5),
+                          color: Color(0xFF1D193A).withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Color(0xFF7C3AED).withOpacity(0.2),
+                            color: Color(0xFF7C3AED).withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -179,7 +179,7 @@ class _ImportExportPageState extends State<ImportExportPage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: buttonColor.withOpacity(0.15),
+                  color: buttonColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -205,7 +205,7 @@ class _ImportExportPageState extends State<ImportExportPage> {
           Text(
             description,
             style: TextStyle(
-              color: GlobalConst.whiteColor.withOpacity(0.7),
+              color: GlobalConst.whiteColor.withValues(alpha: 0.7),
               fontSize: 14,
               height: 1.5,
             ),
@@ -251,7 +251,7 @@ class _ImportExportPageState extends State<ImportExportPage> {
       child: Text(
         text,
         style: TextStyle(
-          color: GlobalConst.whiteColor.withOpacity(0.7),
+          color: GlobalConst.whiteColor.withValues(alpha: 0.7),
           fontSize: 14,
           height: 1.5,
         ),
