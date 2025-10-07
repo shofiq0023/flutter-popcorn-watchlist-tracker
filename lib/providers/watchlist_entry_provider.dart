@@ -41,7 +41,6 @@ class WatchlistEntryProvider extends ChangeNotifier {
     _allWatchList = await db.getAll();
     _unfinishedWatchList = _allWatchList.where((w) => !w.isFinished).toList();
     _finishedWatchList = _allWatchList.where((w) => w.isFinished).toList();
-    notifyListeners();
   }
 
   // ==========> GETTERS
@@ -54,7 +53,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
   String get currentSortType => _currentSortType;
 
   Future<List<WatchlistEntry>> get watchList async {
-    loadAllEntry();
+    await loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
 
     // Apply current sorting after loading
@@ -73,7 +72,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
   }
 
   Future<List<WatchlistEntry>> get finishedWatchList async {
-    loadAllEntry();
+    await loadAllEntry();
     String searchText = searchTextController.text.toLowerCase();
 
     // Apply current sorting after loading
