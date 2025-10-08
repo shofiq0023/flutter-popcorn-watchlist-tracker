@@ -89,10 +89,8 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                               widget.watchlistEntry.title,
                               style: TextStyle(
                                 color: Color(0xFFF0F0F0),
-                                fontSize: 20.0,
-                                fontVariations: const <FontVariation>[
-                                  FontVariation('wght', 700.0),
-                                ],
+                                fontSize: 21.0,
+                                fontWeight: FontWeight.w500
                               ),
                             ),
                             Text(
@@ -105,10 +103,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                                       .categoryName,
                               style: TextStyle(
                                 color: Color(0x80F0F0F0),
-                                fontSize: 10.0,
-                                fontVariations: const <FontVariation>[
-                                  FontVariation('wght', 100.0),
-                                ],
+                                fontSize: 12.0,
                               ),
                             ),
                           ],

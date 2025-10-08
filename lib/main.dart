@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        fontFamily: 'Fredoka'
       ),
       themeMode: ThemeMode.dark,
       home: const WatchlistHomePage(),
