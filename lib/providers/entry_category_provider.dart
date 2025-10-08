@@ -56,7 +56,7 @@ class EntryCategoryProvider extends ChangeNotifier {
         pageTitle,
         style: TextStyle(
           color: GlobalConst.whiteColor,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       );
     }

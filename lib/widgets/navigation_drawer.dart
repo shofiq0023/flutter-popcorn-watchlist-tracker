@@ -39,7 +39,7 @@ class MyNavigationDrawer extends StatelessWidget {
                                     'Error: ${snapshot.error}',
                                     style: const TextStyle(
                                       fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   );
                                 } else {
@@ -137,7 +137,7 @@ class MyNavigationDrawer extends StatelessWidget {
         title: Text(
           title,
           style: TextStyle(
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
             color: selected ? Color(0xFF090812) : GlobalConst.whiteColor,
           ),
         ),

@@ -126,12 +126,12 @@ class _CustomBottomSheetState extends State<CustomBottomSheet>
                             ? Colors.blue.shade700
                             : GlobalConst.whiteColor,
                     fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
                 trailing: Icon(
                   isSelected ? Icons.check : Icons.arrow_forward_ios,
-                  size: 16,
+                  size: 18,
                   color:
                       isSelected
                           ? Colors.blue.shade700

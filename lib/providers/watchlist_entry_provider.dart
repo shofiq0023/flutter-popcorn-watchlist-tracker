@@ -132,7 +132,7 @@ class WatchlistEntryProvider extends ChangeNotifier {
     } else {
       return Text(
         homePageTitle,
-        style: TextStyle(color: GlobalConst.whiteColor, fontWeight: FontWeight.bold),
+        style: TextStyle(color: GlobalConst.whiteColor, fontWeight: FontWeight.w600),
       );
     }
   }

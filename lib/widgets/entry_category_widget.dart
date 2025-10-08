@@ -68,7 +68,7 @@ class _EntryCategoryItemWidgetState extends State<EntryCategoryItemWidget> {
           children: [
             Text(
               widget.entryCategory.categoryName,
-              style: TextStyle(color: GlobalConst.whiteColor, fontSize: 18),
+              style: TextStyle(color: GlobalConst.whiteColor, fontSize: 18, fontWeight: FontWeight.w500),
             ),
             IconButton(
               onPressed: () {
