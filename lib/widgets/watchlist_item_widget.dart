@@ -100,7 +100,7 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
                                       .watchlistEntry
                                       .category
                                       .target!
-                                      .categoryName,
+                                      .categoryName + getUpcomingTag(widget.watchlistEntry.isUpcoming),
                               style: TextStyle(
                                 color: Color(0x80F0F0F0),
                                 fontSize: 12.0,
@@ -204,5 +204,13 @@ class _WatchlistItemWidgetState extends State<WatchlistItemWidget> {
     }
 
     return null;
+  }
+
+  String getUpcomingTag(bool isUpcoming) {
+    if (isUpcoming == true) {
+      return " - Upcoming";
+    }
+
+    return "";
   }
 }
